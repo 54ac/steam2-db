@@ -28,7 +28,7 @@
 
 {#if hasMatches && first}
 	<div class="file-match-pill" title={titleText}>
-		<FileIcon size={11} color="var(--steam-accent)" />
+		<FileIcon size={11} weight="bold" color="var(--steam-accent)" />
 		<span>{cleanFilename(first.filename)}</span>
 		{#if first.builds.length > 0}
 			<span class="build-tag">v{first.builds[0]}</span>

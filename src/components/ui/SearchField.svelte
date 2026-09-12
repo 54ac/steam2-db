@@ -4,6 +4,7 @@
 		XIcon as ClearIcon,
 		ArrowClockwiseIcon as LoadingIcon
 	} from "phosphor-svelte";
+	import IconButton from "./IconButton.svelte";
 
 	interface Props {
 		value?: string;
@@ -66,15 +67,14 @@
 	/>
 
 	{#if value}
-		<button
-			type="button"
+		<IconButton
 			class="clear-btn"
 			onclick={handleClear}
 			title="Clear search"
-			aria-label="Clear search text"
+			ariaLabel="Clear search text"
 		>
 			<ClearIcon size={12} />
-		</button>
+		</IconButton>
 	{/if}
 </div>
 
@@ -127,23 +127,10 @@
 		display: none;
 	}
 
-	.clear-btn {
+	:global(.clear-btn) {
 		position: absolute;
 		right: 0.5rem;
 		top: 50%;
 		transform: translateY(-50%);
-		color: var(--steam-text);
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		padding: 0.125rem;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		line-height: 1;
-	}
-
-	.clear-btn:hover {
-		color: white;
 	}
 </style>

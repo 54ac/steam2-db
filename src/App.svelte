@@ -42,6 +42,8 @@
 		flex-direction: column;
 		font-family: var(--steam-font-sans);
 		overflow: hidden;
+		container-type: inline-size;
+		container-name: app;
 	}
 
 	.main-content {

@@ -1,7 +1,10 @@
 export interface DepotBuild {
-	v: number;
-	d: string;
-	c?: string;
+	version: number;
+	date: string | null;
+	crc32: string;
+	versionStr?: string;
+	parentCrc?: string;
+	previousVersion?: number;
 }
 
 export interface AppSummary {

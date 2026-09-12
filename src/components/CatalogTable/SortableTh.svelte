@@ -71,9 +71,9 @@
 		{#if isActive}
 			<span class="th-icon" aria-hidden="true">
 				{#if sortOrder === "asc"}
-					<ArrowUpIcon size={10} />
+					<ArrowUpIcon size={10} weight="bold" />
 				{:else}
-					<ArrowDownIcon size={10} />
+					<ArrowDownIcon size={10} weight="bold" />
 				{/if}
 			</span>
 		{/if}
@@ -105,6 +105,10 @@
 
 	.steam-th.clickable:hover {
 		background-color: var(--steam-panel-hover);
+		color: white;
+	}
+
+	.steam-th.clickable:hover .th-icon {
 		color: white;
 	}
 

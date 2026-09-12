@@ -75,7 +75,7 @@
 		flex-shrink: 0;
 	}
 
-	@media (max-width: 640px) {
+	@container (width < 640px) {
 		.category-tabs-grid {
 			padding: 0.25rem 0;
 			width: 100%;
@@ -106,7 +106,7 @@
 		}
 	}
 
-	@media (min-width: 380px) and (max-width: 640px) {
+	@container (380px <= width < 640px) {
 		.category-tab-item > button {
 			font-size: var(--steam-fs-sm);
 		}

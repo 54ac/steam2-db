@@ -41,7 +41,7 @@
 
 		<div class="center-section">
 			<span class="info-icon">
-				<InfoIcon size={13} />
+				<InfoIcon size={13} weight="bold" />
 			</span>
 			<span class="desktop-disclaimer-text" title={DISCLAIMER_TEXT}>
 				{DISCLAIMER_TEXT}
@@ -76,7 +76,7 @@
 	<div class="mobile-disclaimer-wrapper">
 		<MobileScrollArea class="disclaimer-scroll-area">
 			<span class="info-icon">
-				<InfoIcon size={12} />
+				<InfoIcon size={12} weight="bold" />
 			</span>
 			<span class="mobile-disclaimer-text" title={DISCLAIMER_TEXT}>
 				{DISCLAIMER_TEXT}
@@ -137,7 +137,7 @@
 		gap: 0.35rem;
 	}
 
-	@media (min-width: 900px) {
+	@container (width >= 900px) {
 		.center-section {
 			display: flex;
 		}
@@ -173,7 +173,7 @@
 		box-sizing: border-box;
 	}
 
-	@media (min-width: 900px) {
+	@container (width >= 900px) {
 		.mobile-disclaimer-wrapper {
 			display: none;
 		}

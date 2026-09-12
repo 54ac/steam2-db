@@ -24,11 +24,11 @@
 				title={opt.title}
 			>
 				{#if opt.id === "depot"}
-					<ListDashesIcon size={15} />
+					<ListDashesIcon size={15} weight="bold" />
 				{:else if opt.id === "app"}
-					<TreeStructureIcon size={15} />
+					<TreeStructureIcon size={15} weight="bold" />
 				{:else}
-					<FileTextIcon size={15} />
+					<FileTextIcon size={15} weight="bold" />
 				{/if}
 				<span>{opt.label}</span>
 			</button>
@@ -50,7 +50,7 @@
 		height: 100%;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 640px) {
 		.desktop-switcher {
 			display: flex;
 		}

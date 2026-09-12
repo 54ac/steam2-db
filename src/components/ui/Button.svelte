@@ -57,9 +57,24 @@
 		line-height: 1;
 	}
 
+	.steam-btn :global(svg) {
+		flex-shrink: 0;
+		color: var(--steam-accent);
+	}
+
+	@media (hover: hover) {
+		.steam-btn:hover:not(:disabled) :global(svg) {
+			color: white;
+		}
+	}
+
 	.steam-btn:disabled {
 		opacity: 0.65;
 		cursor: default;
+		color: var(--steam-text-dim);
+	}
+
+	.steam-btn:disabled :global(svg) {
 		color: var(--steam-text-dim);
 	}
 
@@ -89,9 +104,11 @@
 		box-shadow: var(--steam-shadow-btn);
 	}
 
-	.variant-raised:hover:not(:disabled) {
-		background-color: var(--steam-panel-hover);
-		color: white;
+	@media (hover: hover) {
+		.variant-raised:hover:not(:disabled) {
+			background-color: var(--steam-panel-hover);
+			color: white;
+		}
 	}
 
 	.variant-raised:active:not(:disabled),
@@ -115,8 +132,24 @@
 		color: var(--steam-text);
 	}
 
-	.variant-sunken:hover:not(:disabled) {
-		color: white;
+	@media (hover: hover) {
+		.variant-sunken:hover:not(:disabled) {
+			color: white;
+		}
+	}
+
+	@media (hover: none) and (pointer: coarse) {
+		.size-sm {
+			height: 1.625rem;
+			min-height: 1.625rem;
+			max-height: 1.625rem;
+		}
+
+		.size-md {
+			height: 2rem;
+			min-height: 2rem;
+			max-height: 2rem;
+		}
 	}
 
 	.variant-sunken.active {

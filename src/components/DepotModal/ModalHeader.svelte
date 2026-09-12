@@ -1,16 +1,16 @@
 <script lang="ts">
+	import { CaretDownIcon, CaretUpIcon } from "phosphor-svelte";
 	import type { DepotItem } from "../../types";
 	import {
 		formatBytes,
-		formatBuildDate,
 		formatReleaseDate,
 		formatDeveloper,
 		getDepotDisplayName,
-		getEarliestDate,
 		isGenericDepotName
 	} from "../../utils/formatters";
 	import MobileScrollArea from "../ui/MobileScrollArea.svelte";
 	import SteamDbLink from "../ui/SteamDbLink.svelte";
+	import Button from "../ui/Button.svelte";
 
 	interface Props {
 		depot: DepotItem;
@@ -18,47 +18,51 @@
 
 	let { depot }: Props = $props();
 
+	let isExpanded = $state(false);
+
+	$effect(() => {
+		if (depot.id) {
+			isExpanded = false;
+		}
+	});
+
 	const info = $derived(getDepotDisplayName(depot));
+	const developer = $derived(formatDeveloper(depot.dev || depot.pub));
 
 	const titles = $derived.by(() => {
-		const main = depot.game || info.primaryTitle;
+		if (isGenericDepotName(depot.depot) && depot.game) {
+			return {
+				main: info.primaryTitle,
+				sub: ""
+			};
+		}
+		const main = depot.depot || info.primaryTitle;
 		let sub = "";
-		if (
-			depot.game &&
-			depot.depot &&
-			depot.depot.toLowerCase() !== depot.game.toLowerCase()
-		) {
-			sub = isGenericDepotName(depot.depot)
-				? `· ${info.chipName}`
-				: `· ${depot.depot}`;
+		if (depot.game && main && depot.game.toLowerCase() !== main.toLowerCase()) {
+			sub = `· ${depot.game}`;
 		}
 		return { main, sub };
 	});
 
 	const metaItems = $derived.by(() => {
 		const items: { label: string; val: string | number }[] = [];
-		if (depot.dev || depot.pub) {
-			items.push({
-				label: "Developer",
-				val: formatDeveloper(depot.dev || depot.pub)
-			});
+		if (depot.appId && depot.appId !== depot.id) {
+			items.push({ label: "Depot", val: `${depot.id} (App ${depot.appId})` });
+		} else {
+			items.push({ label: "Depot", val: depot.id });
 		}
-		items.push({ label: "Depot", val: depot.id });
-		items.push({ label: "App", val: depot.appId || "—" });
 		if (depot.releaseDate) {
 			items.push({
 				label: "Released",
 				val: formatReleaseDate(depot.releaseDate)
 			});
 		}
-		items.push({
-			label: "Manifest",
-			val: formatBuildDate(getEarliestDate(depot))
-		});
-		items.push({
-			label: "Size",
-			val: depot.dumpSize ? formatBytes(depot.dumpSize) : "—"
-		});
+		if (depot.dumpSize) {
+			items.push({
+				label: "Size",
+				val: formatBytes(depot.dumpSize)
+			});
+		}
 		return items;
 	});
 </script>
@@ -67,11 +71,20 @@
 	<div class="header-top-line">
 		<div class="game-title-row">
 			<h2 class="main-title">{titles.main}</h2>
+			<SteamDbLink type="depot" id={depot.id} class="steamdb-mobile-icon" />
 			{#if titles.sub}
 				<span class="depot-subtitle">{titles.sub}</span>
 			{/if}
+			{#if developer}
+				<span class="depot-dev">· {developer}</span>
+			{/if}
 		</div>
-		<SteamDbLink type="depot" id={depot.id} variant="button" />
+		<SteamDbLink
+			type="depot"
+			id={depot.id}
+			variant="button"
+			class="steamdb-desktop-btn"
+		/>
 	</div>
 
 	<ul class="meta-chips" aria-label="Depot metadata">
@@ -85,12 +98,12 @@
 
 	{#if depot.mountedApps && depot.mountedApps.length > 1}
 		<div class="used-in-row">
+			<span class="chip-label">Used in:</span>
 			<MobileScrollArea
-				desktopWrap={true}
+				desktopWrap={isExpanded}
 				resetKey={depot.id}
 				class="mounted-apps-scroll-area"
 			>
-				<span class="chip-label">Used in:</span>
 				{#each depot.mountedApps as app, idx (app.appId)}
 					{#if idx > 0}
 						<span class="app-bullet" aria-hidden="true">•</span>
@@ -101,6 +114,28 @@
 					</span>
 				{/each}
 			</MobileScrollArea>
+			{#if depot.mountedApps.length > 2}
+				<Button
+					size="sm"
+					class="expand-apps-btn"
+					onclick={() => (isExpanded = !isExpanded)}
+					title={isExpanded
+						? "Collapse applications"
+						: `Show all ${depot.mountedApps.length} applications`}
+					aria-label={isExpanded
+						? "Collapse applications"
+						: `Show all ${depot.mountedApps.length} applications`}
+					aria-expanded={isExpanded}
+				>
+					{#snippet icon()}
+						{#if isExpanded}
+							<CaretUpIcon size={12} weight="bold" />
+						{:else}
+							<CaretDownIcon size={12} weight="bold" />
+						{/if}
+					{/snippet}
+				</Button>
+			{/if}
 		</div>
 	{/if}
 </div>
@@ -115,7 +150,7 @@
 		flex-shrink: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 0.375rem;
+		gap: 0.35rem;
 	}
 
 	.header-top-line {
@@ -142,7 +177,10 @@
 		margin: 0;
 		line-height: 1.35;
 		white-space: nowrap;
-		flex-shrink: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		min-width: 0;
+		flex-shrink: 1;
 	}
 
 	.depot-subtitle {
@@ -154,28 +192,49 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		min-width: 0;
+		flex-shrink: 2;
+	}
+
+	.depot-dev {
+		font-size: var(--steam-fs-sm);
+		color: var(--steam-text);
+		font-family: var(--steam-font-sans);
+		line-height: 1.35;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		min-width: 0;
+		flex-shrink: 3;
+	}
+
+	:global(.steamdb-mobile-icon) {
+		display: none !important;
+	}
+
+	:global(.steamdb-desktop-btn) {
+		display: inline-flex !important;
 	}
 
 	.meta-chips {
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
-		gap: 0.375rem 0.625rem;
+		gap: 0.35rem 0.625rem;
 		font-size: var(--steam-fs-sm);
 		font-family: var(--steam-font-sans);
 		line-height: 1.35;
-		flex-shrink: 0;
 		list-style: none;
 		margin: 0;
 		padding: 0;
 	}
 
 	.meta-chip {
-		display: flex;
+		display: inline-flex;
 		align-items: center;
 		gap: 0.25rem;
 		list-style: none;
 		line-height: 1.35;
+		white-space: nowrap;
 	}
 
 	.chip-label {
@@ -188,7 +247,8 @@
 
 	.used-in-row {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
+		gap: 0.375rem;
 		width: 100%;
 		min-width: 0;
 		font-size: var(--steam-fs-sm);
@@ -198,11 +258,15 @@
 
 	:global(.mounted-apps-scroll-area) {
 		--scroll-fade-bg: var(--steam-bg);
+
+		flex: 1;
+		min-width: 0;
 	}
 
 	.used-in-row .chip-label {
 		white-space: nowrap;
 		flex-shrink: 0;
+		line-height: 1.35;
 	}
 
 	.app-bullet {
@@ -223,5 +287,29 @@
 	.app-id {
 		color: var(--steam-accent);
 		font-size: var(--steam-fs-xs);
+	}
+
+	:global(.expand-apps-btn) {
+		align-self: flex-start;
+		padding: 0 0.25rem;
+	}
+
+	@container (width < 600px) {
+		.depot-subtitle,
+		.depot-dev {
+			display: none;
+		}
+
+		:global(.steamdb-mobile-icon) {
+			display: inline-flex !important;
+		}
+
+		:global(.steamdb-desktop-btn) {
+			display: none !important;
+		}
+
+		:global(.expand-apps-btn) {
+			display: none !important;
+		}
 	}
 </style>

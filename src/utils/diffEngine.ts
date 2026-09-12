@@ -196,15 +196,15 @@ export const exportDiffAsTxt = (
 	const buildA = depot.builds?.[buildIdxA];
 	const buildB = depot.builds?.[buildIdxB];
 	let buildDateA = `Build ${buildIdxA}`;
-	if (buildA?.d) {
-		const crcSuffix = buildA.c ? " · " + buildA.c : "";
-		buildDateA = `${buildA.d} (v${buildA.v}${crcSuffix})`;
+	if (buildA?.date) {
+		const crcSuffix = buildA.crc32 ? " · " + buildA.crc32 : "";
+		buildDateA = `${buildA.date} (v${buildA.version}${crcSuffix})`;
 	}
 
 	let buildDateB = `Build ${buildIdxB}`;
-	if (buildB?.d) {
-		const crcSuffix = buildB.c ? " · " + buildB.c : "";
-		buildDateB = `${buildB.d} (v${buildB.v}${crcSuffix})`;
+	if (buildB?.date) {
+		const crcSuffix = buildB.crc32 ? " · " + buildB.crc32 : "";
+		buildDateB = `${buildB.date} (v${buildB.version}${crcSuffix})`;
 	}
 
 	let netSizeChangeStr = "0 B";

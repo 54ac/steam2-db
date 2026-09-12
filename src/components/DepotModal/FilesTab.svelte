@@ -317,16 +317,28 @@
 												: "Expand folder"}
 										>
 											{#if item.isExpanded}
-												<CaretDownIcon size={13} />
-												<FolderOpenIcon size={14} color="var(--steam-accent)" />
+												<CaretDownIcon size={13} weight="bold" />
+												<FolderOpenIcon
+													size={14}
+													weight="bold"
+													color="var(--steam-accent)"
+												/>
 											{:else}
-												<CaretRightIcon size={13} />
-												<FolderIcon size={14} color="var(--steam-accent)" />
+												<CaretRightIcon size={13} weight="bold" />
+												<FolderIcon
+													size={14}
+													weight="bold"
+													color="var(--steam-accent)"
+												/>
 											{/if}
 										</button>
 									{:else}
 										<span class="file-icon-indent">
-											<FileIcon size={14} color="var(--steam-accent)" />
+											<FileIcon
+												size={14}
+												weight="bold"
+												color="var(--steam-accent)"
+											/>
 										</span>
 									{/if}
 									<span
@@ -350,7 +362,11 @@
 								style:height="{virtualRow.size / 16}rem"
 							>
 								<div class="file-path-group">
-									<FileIcon size={14} color="var(--steam-accent)" />
+									<FileIcon
+										size={14}
+										weight="bold"
+										color="var(--steam-accent)"
+									/>
 									<span class="file-name" title={cleanFilename(file.p)}
 										>{cleanFilename(file.p)}</span
 									>
@@ -417,7 +433,7 @@
 		box-sizing: border-box;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.table-header {
 			font-size: var(--steam-fs-sm);
 		}
@@ -476,12 +492,14 @@
 		cursor: pointer;
 	}
 
-	.file-row:hover {
-		background-color: var(--steam-hover-bg);
-		color: white;
+	@media (hover: hover) {
+		.file-row:hover {
+			background-color: var(--steam-hover-bg);
+			color: white;
+		}
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.file-row {
 			padding: 0 0.75rem;
 			gap: 1rem;
@@ -497,7 +515,7 @@
 		flex: 1;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.file-path-group {
 			gap: 0.5rem;
 		}
@@ -515,8 +533,10 @@
 		user-select: none;
 	}
 
-	.folder-toggle-btn:hover {
-		color: white;
+	@media (hover: hover) {
+		.folder-toggle-btn:hover {
+			color: white;
+		}
 	}
 
 	.file-icon-indent {
@@ -550,7 +570,7 @@
 		user-select: none;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.file-size {
 			font-size: var(--steam-fs-sm);
 		}

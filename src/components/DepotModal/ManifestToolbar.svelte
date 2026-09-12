@@ -61,14 +61,14 @@
 	});
 
 	const currentCrc = $derived.by(() => {
-		return builds[selectedBuildIndex]?.c || blobCrc;
+		return builds[selectedBuildIndex]?.crc32 || blobCrc;
 	});
 
 	const extractCommand = $derived.by(() => {
 		if (depotId === undefined) {
 			return "";
 		}
-		const v = builds[selectedBuildIndex]?.v ?? 0;
+		const v = builds[selectedBuildIndex]?.version ?? 0;
 		const crcFlag = currentCrc ? ` --blobcrc ${currentCrc}` : "";
 		return `extract.exe ..\\blobs ..\\dats ${depotId} ${v}${crcFlag} --out ..\\out`;
 	});
@@ -102,7 +102,7 @@
 						aria-label="Flat list view"
 					>
 						{#snippet icon()}
-							<ListIcon size={14} />
+							<ListIcon size={14} weight="bold" />
 						{/snippet}
 					</Button>
 					<Button
@@ -113,7 +113,7 @@
 						aria-label="Folder tree view"
 					>
 						{#snippet icon()}
-							<TreeStructureIcon size={14} />
+							<TreeStructureIcon size={14} weight="bold" />
 						{/snippet}
 					</Button>
 				</div>
@@ -139,7 +139,7 @@
 					aria-label="Export full filelist as text file"
 				>
 					{#snippet icon()}
-						<DownloadIcon size={13} />
+						<DownloadIcon size={13} weight="bold" />
 					{/snippet}
 					<span>Export</span>
 				</Button>
@@ -152,9 +152,10 @@
 					onclick={handleToggleExtract}
 					title="Toggle extractor command"
 					aria-label="Toggle extractor command"
+					class="extract-btn"
 				>
 					{#snippet icon()}
-						<TerminalIcon size={13} />
+						<TerminalIcon size={13} weight="bold" />
 					{/snippet}
 					<span>Extract</span>
 				</Button>
@@ -260,7 +261,7 @@
 		width: 100%;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.date-select-group {
 			width: auto;
 		}
@@ -287,7 +288,7 @@
 		width: 100%;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.search-and-export-wrap {
 			width: auto;
 		}
@@ -298,7 +299,7 @@
 		text-overflow: ellipsis;
 	}
 
-	@media (max-width: 639px) {
+	@container (width < 600px) {
 		:global(.manifest-build-select) {
 			flex: 1;
 			min-width: 0;
@@ -315,7 +316,7 @@
 		width: auto;
 	}
 
-	@media (max-width: 639px) {
+	@container (width < 600px) {
 		.steam-toolbar.compact .date-select-group {
 			flex: 1;
 			min-width: 0;
@@ -325,5 +326,12 @@
 	.steam-toolbar.compact .search-and-export-wrap {
 		width: auto;
 		flex-shrink: 0;
+	}
+
+	@container (width < 600px) {
+		:global(.extract-btn),
+		.extract-strip {
+			display: none;
+		}
 	}
 </style>

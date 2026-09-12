@@ -62,9 +62,9 @@
 
 	// Focus input on tab change for desktop users
 	$effect(() => {
-		const isDesktop =
-			window.matchMedia("(min-width: 640px)").matches &&
-			window.matchMedia("(pointer: fine)").matches;
+		const isDesktop = window.matchMedia(
+			"(min-width: 640px) and (pointer: fine)"
+		).matches;
 
 		if (!isDesktop) {
 			return;
@@ -142,16 +142,30 @@
 		}
 	};
 
-	// Switch to diff tab: initialize base to currently viewed build and target to adjacent version
+	// Switch to diff tab: initialize base to parent build or adjacent version
 	const handleSelectDiff = () => {
 		hasVisitedDiff = true;
 		if (builds.length >= 2) {
-			if (selectedBuildIndex < builds.length - 1) {
-				diffBaseIndex = selectedBuildIndex;
-				diffTargetIndex = selectedBuildIndex + 1;
-			} else {
+			diffTargetIndex = selectedBuildIndex;
+			const targetBuild = builds[selectedBuildIndex];
+			let matchedBase = -1;
+
+			const { parentCrc, previousVersion } = targetBuild || {};
+
+			if (parentCrc) {
+				matchedBase = builds.findIndex((b) => b.crc32 === parentCrc);
+			}
+			if (matchedBase === -1 && previousVersion !== undefined) {
+				matchedBase = builds.findIndex((b) => b.version === previousVersion);
+			}
+
+			if (matchedBase !== -1 && matchedBase !== selectedBuildIndex) {
+				diffBaseIndex = matchedBase;
+			} else if (selectedBuildIndex > 0) {
 				diffBaseIndex = selectedBuildIndex - 1;
-				diffTargetIndex = selectedBuildIndex;
+			} else {
+				diffBaseIndex = 0;
+				diffTargetIndex = 1;
 			}
 		}
 		modalTab = "diff";
@@ -172,7 +186,7 @@
 		>
 			<div class="modal-titlebar">
 				<div class="title-group">
-					<InfoIcon size={16} color="var(--steam-accent)" />
+					<InfoIcon size={16} weight="bold" color="var(--steam-accent)" />
 					<Dialog.Title class="title-text">DEPOT PROPERTIES</Dialog.Title>
 				</div>
 				<Dialog.Close class="modal-close-btn" aria-label="Close dialog">
@@ -226,7 +240,7 @@
 
 				{#if !hasBuilds}
 					<div class="state-box steam-sunken">
-						<InfoIcon size={24} color="var(--steam-accent)" />
+						<InfoIcon size={24} weight="bold" color="var(--steam-accent)" />
 						<span class="state-text-light">No manifest available</span>
 					</div>
 				{:else}
@@ -235,7 +249,7 @@
 						{#if manifestLoader.loading}
 							<div class="state-box steam-sunken">
 								<span class="spinner-icon"
-									><ArrowClockwiseIcon size={20} /></span
+									><ArrowClockwiseIcon size={20} weight="bold" /></span
 								>
 								<span class="state-text">Loading files...</span>
 							</div>
@@ -245,7 +259,7 @@
 								<span class="state-error-detail">{manifestLoader.error}</span>
 								<Button size="sm" onclick={manifestLoader.retry}>
 									{#snippet icon()}
-										<ArrowClockwiseIcon size={12} />
+										<ArrowClockwiseIcon size={12} weight="bold" />
 									{/snippet}
 									<span>Retry</span>
 								</Button>
@@ -271,7 +285,7 @@
 							{#if diffLoader.loading}
 								<div class="state-box steam-sunken">
 									<span class="spinner-icon"
-										><ArrowClockwiseIcon size={20} /></span
+										><ArrowClockwiseIcon size={20} weight="bold" /></span
 									>
 									<span class="state-text"
 										>Calculating manifest differences...</span
@@ -283,7 +297,7 @@
 									<span class="state-error-detail">{diffLoader.error}</span>
 									<Button size="sm" onclick={diffLoader.retry}>
 										{#snippet icon()}
-											<ArrowClockwiseIcon size={12} />
+											<ArrowClockwiseIcon size={12} weight="bold" />
 										{/snippet}
 										<span>Retry</span>
 									</Button>
@@ -321,15 +335,28 @@
 
 <style>
 	:global(.modal-content) {
-		width: calc(100% - 1rem);
-		max-width: 56rem;
-		height: min(41.25rem, calc(100dvh - 1rem));
+		width: min(
+			var(--steam-modal-max-w),
+			calc(100dvw - var(--steam-modal-gutter))
+		);
+		height: min(
+			var(--steam-modal-max-h),
+			calc(100dvh - var(--steam-modal-gutter))
+		);
+		container-type: inline-size;
+		container-name: modal;
 	}
 
 	@media (min-width: 640px) {
 		:global(.modal-content) {
-			width: calc(100% - 2rem);
-			height: min(41.25rem, 90vh);
+			width: min(
+				var(--steam-modal-max-w),
+				calc(100dvw - var(--steam-modal-gutter-desktop))
+			);
+			height: min(
+				var(--steam-modal-max-h),
+				calc(100dvh - var(--steam-modal-gutter-desktop))
+			);
 		}
 	}
 

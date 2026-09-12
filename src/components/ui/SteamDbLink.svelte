@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ArrowSquareOutIcon } from "phosphor-svelte";
+	import IconButton from "./IconButton.svelte";
 
 	interface Props {
 		type: "app" | "depot";
@@ -15,23 +16,33 @@
 	);
 </script>
 
-<a
-	href={`https://steamdb.info/${type}/${id}`}
-	target="_blank"
-	rel="noopener noreferrer"
-	class="steamdb-link {variant} {className}"
-	title={label}
-	aria-label={`${label} (opens in new tab)`}
-	onclick={(e) => e.stopPropagation()}
-	onkeydown={(e) => e.stopPropagation()}
->
-	{#if variant === "button"}
+{#if variant === "button"}
+	<a
+		href={`https://steamdb.info/${type}/${id}`}
+		target="_blank"
+		rel="noopener noreferrer"
+		class="steamdb-link button {className}"
+		title={label}
+		aria-label={`${label} (opens in new tab)`}
+		onclick={(e) => e.stopPropagation()}
+		onkeydown={(e) => e.stopPropagation()}
+	>
 		<span>SteamDB</span>
-		<ArrowSquareOutIcon size={11} class="link-icon" />
-	{:else}
-		<ArrowSquareOutIcon size={12} class="link-icon" />
-	{/if}
-</a>
+		<ArrowSquareOutIcon size={11} weight="bold" class="link-icon" />
+	</a>
+{:else}
+	<IconButton
+		href={`https://steamdb.info/${type}/${id}`}
+		target="_blank"
+		title={label}
+		ariaLabel={`${label} (opens in new tab)`}
+		class="steamdb-icon-link {className}"
+		onclick={(e) => e.stopPropagation()}
+		onkeydown={(e) => e.stopPropagation()}
+	>
+		<ArrowSquareOutIcon size={12} weight="bold" />
+	</IconButton>
+{/if}
 
 <style>
 	.steamdb-link {
@@ -44,20 +55,12 @@
 		box-sizing: border-box;
 	}
 
-	.steamdb-link.icon {
+	.steamdb-link :global(.link-icon) {
 		color: var(--steam-accent);
-		opacity: 0.65;
-		transition:
-			opacity 0.15s ease,
-			color 0.15s ease;
-		padding: 0.125rem;
-		vertical-align: middle;
 	}
 
-	.steamdb-link.icon:hover {
-		opacity: 1;
-		color: white;
-		background-color: var(--steam-panel-hover);
+	:global(.steamdb-icon-link) {
+		vertical-align: middle;
 	}
 
 	.steamdb-link.button {
@@ -77,17 +80,15 @@
 		cursor: pointer;
 	}
 
-	.steamdb-link.button:hover {
-		background-color: var(--steam-panel-hover);
-		color: white;
-	}
+	@media (hover: hover) {
+		.steamdb-link.button:hover {
+			background-color: var(--steam-panel-hover);
+			color: white;
+		}
 
-	.steamdb-link.button :global(.link-icon) {
-		color: var(--steam-accent);
-	}
-
-	.steamdb-link.button:hover :global(.link-icon) {
-		color: white;
+		.steamdb-link.button:hover :global(.link-icon) {
+			color: white;
+		}
 	}
 
 	.steamdb-link.button:active {

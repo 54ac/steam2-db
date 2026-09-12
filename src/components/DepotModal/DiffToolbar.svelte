@@ -55,7 +55,7 @@
 				aria-label="Swap base and compare builds"
 			>
 				{#snippet icon()}
-					<ArrowsLeftRightIcon size={13} />
+					<ArrowsLeftRightIcon size={13} weight="bold" />
 				{/snippet}
 			</Button>
 
@@ -91,7 +91,7 @@
 					aria-label="Export manifest diff as text file"
 				>
 					{#snippet icon()}
-						<DownloadIcon size={13} />
+						<DownloadIcon size={13} weight="bold" />
 					{/snippet}
 					<span>Export diff</span>
 				</Button>
@@ -110,7 +110,7 @@
 		flex-wrap: nowrap;
 	}
 
-	@media (max-width: 639px) {
+	@container (width < 600px) {
 		.diff-controls-group {
 			flex-flow: column wrap;
 			align-items: stretch;
@@ -126,7 +126,7 @@
 		flex-wrap: nowrap;
 	}
 
-	@media (max-width: 639px) {
+	@container (width < 600px) {
 		.diff-select-pair {
 			width: 100%;
 			flex-wrap: wrap;
@@ -142,7 +142,7 @@
 		white-space: nowrap;
 	}
 
-	@media (max-width: 639px) {
+	@container (width < 600px) {
 		:global(.diff-build-select) {
 			max-width: 100%;
 		}
@@ -155,7 +155,7 @@
 		white-space: nowrap;
 	}
 
-	@media (max-width: 639px) {
+	@container (width < 600px) {
 		.desktop-date-label {
 			display: none;
 		}
@@ -168,7 +168,7 @@
 		flex-shrink: 0;
 	}
 
-	@media (max-width: 639px) {
+	@container (width < 600px) {
 		.diff-search-wrap {
 			width: 100%;
 		}

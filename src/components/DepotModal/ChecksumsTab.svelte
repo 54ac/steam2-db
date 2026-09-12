@@ -120,7 +120,7 @@
 		user-select: none;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.table-header {
 			padding: 0.375rem 0.75rem;
 			font-size: var(--steam-fs-sm);
@@ -141,7 +141,7 @@
 		box-sizing: border-box;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.scroll-area {
 			padding: 0.5rem;
 			gap: 0.625rem;
@@ -165,7 +165,7 @@
 		box-sizing: border-box;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.dump-card {
 			padding: 0.625rem;
 			gap: 0.5rem;
@@ -188,7 +188,7 @@
 		white-space: nowrap;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.filesize {
 			font-size: var(--steam-fs-sm);
 		}
@@ -200,7 +200,7 @@
 		font-family: var(--steam-font-mono);
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.dump-index {
 			font-size: var(--steam-fs-sm);
 		}
@@ -212,7 +212,7 @@
 		gap: 0.2rem;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.field-row {
 			display: grid;
 			grid-template-columns: 5rem 1fr 4.25rem;
@@ -227,7 +227,7 @@
 		gap: 0.35rem;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.field-label-group {
 			gap: 0;
 		}
@@ -241,13 +241,13 @@
 		white-space: nowrap;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.field-label {
 			font-size: var(--steam-fs-sm);
 		}
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		:global(.mobile-copy-btn) {
 			display: none !important;
 		}
@@ -258,7 +258,7 @@
 		width: 100%;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		:global(button.desktop-copy-btn) {
 			display: inline-flex !important;
 		}
@@ -280,7 +280,7 @@
 		box-sizing: border-box;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.value-box {
 			font-size: var(--steam-fs-sm);
 			padding: 0.25rem 0.5rem;

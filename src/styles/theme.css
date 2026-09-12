@@ -60,6 +60,14 @@
 	--steam-fs-base: 0.8125rem;
 	--steam-fs-md: 0.875rem;
 	--steam-fs-lg: 0.9375rem;
+	--steam-spacing-xs: 0.25rem;
+	--steam-spacing-sm: 0.5rem;
+	--steam-spacing-md: 0.75rem;
+	--steam-spacing-lg: 1rem;
+	--steam-modal-max-w: 64rem;
+	--steam-modal-max-h: 45rem;
+	--steam-modal-gutter: 1rem;
+	--steam-modal-gutter-desktop: 2rem;
 }
 
 *,
@@ -265,7 +273,7 @@ a {
 	box-sizing: border-box;
 }
 
-@media (min-width: 640px) {
+@container (width >= 640px) {
 	.virtual-scroll-area {
 		font-size: var(--steam-fs-base);
 	}
@@ -296,8 +304,17 @@ a {
 	user-select: none;
 }
 
-.steam-tab:hover:not(:disabled) {
-	color: white;
+@media (hover: hover) {
+	.steam-tab:hover:not(:disabled) {
+		color: white;
+	}
+}
+
+@media (hover: none) and (pointer: coarse) {
+	.steam-tab {
+		min-height: 2rem;
+		padding: 0.375rem 0.625rem;
+	}
 }
 
 .steam-tab:disabled {
@@ -338,7 +355,7 @@ a {
 	box-sizing: border-box;
 }
 
-@media (min-width: 640px) {
+@container (width >= 640px) {
 	.steam-toolbar {
 		padding: 0.5rem 0.75rem;
 		min-height: 2.5rem;
@@ -350,7 +367,6 @@ a {
 }
 
 .steam-table-row {
-	transition: background-color 0.1s ease;
 	color: var(--steam-text);
 	background-color: var(--steam-darkpanel-alt);
 	cursor: default;

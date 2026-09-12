@@ -246,7 +246,7 @@ export class CatalogStore {
 		const targetDate = searchParams.get("date") || searchParams.get("build");
 		const foundIdx =
 			targetDate && target.builds
-				? target.builds.findIndex((b) => b.d === targetDate)
+				? target.builds.findIndex((b) => b.date === targetDate)
 				: -1;
 		this.selectedDepot = target;
 		this.selectedBuildIndex = foundIdx >= 0 ? foundIdx : (state?.buildIdx ?? 0);
@@ -345,7 +345,7 @@ export class CatalogStore {
 
 		const url = new SvelteURL(window.location.href);
 		url.searchParams.set("depot", String(this.selectedDepot.id));
-		const bDate = this.selectedDepot.builds?.[this.selectedBuildIndex]?.d;
+		const bDate = this.selectedDepot.builds?.[this.selectedBuildIndex]?.date;
 		if (bDate) {
 			url.searchParams.set("date", bDate);
 		} else {
@@ -390,7 +390,7 @@ export class CatalogStore {
 		}
 
 		const builds = target.builds || [];
-		const byVer = builds.findIndex((b) => b.v === buildVersionOrIndex);
+		const byVer = builds.findIndex((b) => b.version === buildVersionOrIndex);
 		const fallbackIdx = builds[buildVersionOrIndex] ? buildVersionOrIndex : 0;
 		this.openDepot(target, byVer >= 0 ? byVer : fallbackIdx);
 	}

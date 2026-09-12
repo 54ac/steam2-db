@@ -99,7 +99,7 @@
 						title={`Click to view ${file.filename} in manifest (earliest build: v${earliest})`}
 						aria-label={`Open manifest build ${earliest} for ${file.filename}`}
 					>
-						<FileIcon size={12} color="var(--steam-accent)" />
+						<FileIcon size={12} weight="bold" color="var(--steam-accent)" />
 						<span class="file-chip-name">{cleanFilename(file.filename)}</span>
 						{#if file.builds && file.builds.length > 0}
 							<span class="build-badge">{buildRanges}</span>
@@ -158,9 +158,6 @@
 		font-size: inherit;
 		color: inherit;
 		text-align: left;
-		transition:
-			background-color 0.1s ease,
-			border-color 0.1s ease;
 		box-sizing: border-box;
 	}
 

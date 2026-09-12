@@ -67,9 +67,9 @@
 	>
 		{#snippet icon()}
 			{#if store.sortOrder === "asc"}
-				<ArrowUpIcon size={12} color="var(--steam-accent)" />
+				<ArrowUpIcon size={10} weight="bold" />
 			{:else}
-				<ArrowDownIcon size={12} color="var(--steam-accent)" />
+				<ArrowDownIcon size={10} weight="bold" />
 			{/if}
 		{/snippet}
 		<span class="sort-text">{store.sortOrder === "asc" ? "ASC" : "DESC"}</span>
@@ -103,7 +103,8 @@
 	}
 
 	.sort-text {
-		margin-left: auto;
+		width: 2.25rem;
+		text-align: right;
 		font-family: var(--steam-font-sans);
 		font-weight: bold;
 	}

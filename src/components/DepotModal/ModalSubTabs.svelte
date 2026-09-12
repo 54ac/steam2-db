@@ -59,7 +59,7 @@
 				aria-selected={activeTab === tab.id}
 				onclick={tab.onclick}
 			>
-				<tab.icon size={14} color="var(--steam-accent)" />
+				<tab.icon size={14} weight="bold" color="var(--steam-accent)" />
 				<span>{tab.label}</span>
 				{#if tab.count !== undefined}
 					<span class="count-label">({tab.count.toLocaleString()})</span>

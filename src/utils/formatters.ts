@@ -227,7 +227,7 @@ export const getDepotPageTitle = (
 		return "Steam2 Browser";
 	}
 	const { primaryTitle } = getDepotDisplayName(depot);
-	const build = depot.builds?.[buildIdx]?.d || "";
+	const build = depot.builds?.[buildIdx]?.date || "";
 	const buildSuffix = build && build !== "—" ? ` (${build})` : "";
 	return `Steam2 Browser: ${primaryTitle}${buildSuffix}`;
 };

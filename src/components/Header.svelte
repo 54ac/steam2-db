@@ -14,6 +14,7 @@
 		VIEW_MODE_OPTIONS
 	} from "../constants";
 	import Button from "./ui/Button.svelte";
+	import IconButton from "./ui/IconButton.svelte";
 
 	const store = getCatalogStore();
 
@@ -25,16 +26,14 @@
 <header class="header-root">
 	<div class="title-area">
 		<h1 class="title">Steam2 Browser</h1>
-		<a
+		<IconButton
 			href={GITHUB_URL}
 			target="_blank"
-			rel="noopener noreferrer"
-			class="github-header-link"
 			title="GitHub repository (opens in new tab)"
-			aria-label="GitHub repository (opens in new tab)"
+			ariaLabel="GitHub repository (opens in new tab)"
 		>
-			<GithubLogoIcon size={15} />
-		</a>
+			<GithubLogoIcon size={15} weight="bold" />
+		</IconButton>
 	</div>
 
 	<ul class="stats" aria-label="Archive catalog statistics">
@@ -76,11 +75,11 @@
 				title={opt.title}
 			>
 				{#if opt.id === "depot"}
-					<ListDashesIcon size={12} />
+					<ListDashesIcon size={12} weight="bold" />
 				{:else if opt.id === "app"}
-					<TreeStructureIcon size={12} />
+					<TreeStructureIcon size={12} weight="bold" />
 				{:else}
-					<FileTextIcon size={12} />
+					<FileTextIcon size={12} weight="bold" />
 				{/if}
 				<span>{opt.label}</span>
 			</Button>
@@ -105,7 +104,7 @@
 		gap: 0.25rem;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 640px) {
 		.header-root {
 			padding: 0 0.75rem;
 			height: var(--steam-h-bar);
@@ -132,32 +131,17 @@
 		white-space: nowrap;
 	}
 
-	@media (min-width: 400px) {
+	@container (width >= 400px) {
 		.title {
 			font-size: var(--steam-fs-md);
 			letter-spacing: 0.03em;
 		}
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 640px) {
 		.title {
 			font-size: var(--steam-fs-lg);
 		}
-	}
-
-	.github-header-link {
-		color: var(--steam-text);
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		text-decoration: none;
-		padding: 0.125rem;
-		transition: color 0.1s ease;
-		flex-shrink: 0;
-	}
-
-	.github-header-link:hover {
-		color: white;
 	}
 
 	.stats {
@@ -171,7 +155,7 @@
 		padding: 0;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 640px) {
 		.stats {
 			display: flex;
 		}
@@ -197,7 +181,7 @@
 		flex-shrink: 0;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 640px) {
 		.mobile-switcher {
 			display: none;
 		}

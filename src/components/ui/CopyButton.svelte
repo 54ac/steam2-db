@@ -85,9 +85,9 @@
 	>
 		{#snippet icon()}
 			{#if copied}
-				<CheckIcon size={iconSize} color="var(--steam-green)" />
+				<CheckIcon size={iconSize} weight="bold" color="var(--steam-green)" />
 			{:else}
-				<CopyIcon size={iconSize} />
+				<CopyIcon size={iconSize} weight="bold" />
 			{/if}
 		{/snippet}
 		{#if showLabel || (copied && showLabelOnCopied)}
@@ -105,12 +105,12 @@
 		title={resolvedTitle}
 	>
 		{#if copied}
-			<CheckIcon size={iconSize} color="var(--steam-green)" />
+			<CheckIcon size={iconSize} weight="bold" color="var(--steam-green)" />
 			{#if showLabelOnCopied}
 				<span class="copied-text">{copiedLabel}</span>
 			{/if}
 		{:else}
-			<CopyIcon size={iconSize} />
+			<CopyIcon size={iconSize} weight="bold" />
 			{#if showLabel}
 				<span>{label}</span>
 			{/if}
@@ -144,9 +144,10 @@
 		box-sizing: border-box;
 	}
 
-	.copy-ghost-btn:hover:not(:disabled),
-	.copy-ghost-btn:active:not(:disabled) {
-		color: white;
+	@media (hover: hover) {
+		.copy-ghost-btn:hover:not(:disabled) {
+			color: white;
+		}
 	}
 
 	.copy-ghost-btn.copied {

@@ -4,7 +4,13 @@
 		DiffFilterMode,
 		FileDiffEntry
 	} from "../../types";
-	import { ArchiveIcon } from "phosphor-svelte";
+	import {
+		ArchiveIcon,
+		FileIcon,
+		PlusIcon,
+		MinusIcon,
+		TildeIcon
+	} from "phosphor-svelte";
 	import { formatBytes, cleanFilename } from "../../utils/formatters";
 	import { createFixedVirtualizer } from "../../state/virtualizer.svelte";
 	import EmptyState from "../ui/EmptyState.svelte";
@@ -68,29 +74,38 @@
 		{
 			mode: DiffFilterMode;
 			variant?: "default" | "changed" | "added" | "modified" | "removed";
-			label: string;
+			desktopLabel: string;
+			mobileLabel: string;
 		}[]
 	>([
-		{ mode: "all", label: `All (${summary.entries.length.toLocaleString()})` },
+		{
+			mode: "all",
+			desktopLabel: `All (${summary.entries.length.toLocaleString()})`,
+			mobileLabel: `All (${summary.entries.length.toLocaleString()})`
+		},
 		{
 			mode: "changed",
 			variant: "changed",
-			label: `Changed (${totalChanged.toLocaleString()})`
+			desktopLabel: `Changed (${totalChanged.toLocaleString()})`,
+			mobileLabel: `Δ ${totalChanged.toLocaleString()}`
 		},
 		{
 			mode: "added",
 			variant: "added",
-			label: `+${summary.addedCount} added`
+			desktopLabel: `+${summary.addedCount} added`,
+			mobileLabel: `+${summary.addedCount}`
 		},
 		{
 			mode: "modified",
 			variant: "modified",
-			label: `~${summary.modifiedCount} modified`
+			desktopLabel: `~${summary.modifiedCount} modified`,
+			mobileLabel: `~${summary.modifiedCount}`
 		},
 		{
 			mode: "removed",
 			variant: "removed",
-			label: `-${summary.removedCount} removed`
+			desktopLabel: `-${summary.removedCount} removed`,
+			mobileLabel: `-${summary.removedCount}`
 		}
 	]);
 
@@ -104,19 +119,6 @@
 		return "0 B";
 	});
 
-	const getStatusSymbol = (status: FileDiffEntry["status"]) => {
-		switch (status) {
-			case "added":
-				return "+";
-			case "removed":
-				return "-";
-			case "modified":
-				return "~";
-			default:
-				return "•";
-		}
-	};
-
 	const isEmpty = $derived(filteredEntries.length === 0);
 </script>
 
@@ -129,13 +131,15 @@
 					active={filterMode === btn.mode}
 					onclick={() => (filterMode = btn.mode)}
 				>
-					{btn.label}
+					<span class="btn-desktop">{btn.desktopLabel}</span>
+					<span class="btn-mobile">{btn.mobileLabel}</span>
 				</FilterPill>
 			{/each}
 		</div>
 
 		<div class="net-size-label">
-			<span>Net change:</span>
+			<span class="net-label-full">Net change:</span>
+			<span class="net-label-short">Net:</span>
 			<strong
 				class="net-size-val"
 				class:positive={summary.netSizeDiff > 0}
@@ -175,8 +179,32 @@
 							style:height="{virtualRow.size / 16}rem"
 						>
 							<div class="file-path-group">
-								<span class="status-badge status-{entry.status}">
-									{getStatusSymbol(entry.status)}
+								<span class="status-icon-wrap" aria-label={entry.status}>
+									{#if entry.status === "added"}
+										<PlusIcon
+											size={14}
+											weight="bold"
+											color="var(--steam-green)"
+										/>
+									{:else if entry.status === "removed"}
+										<MinusIcon
+											size={14}
+											weight="bold"
+											color="var(--steam-red)"
+										/>
+									{:else if entry.status === "modified"}
+										<TildeIcon
+											size={14}
+											weight="bold"
+											color="var(--steam-accent)"
+										/>
+									{:else}
+										<FileIcon
+											size={14}
+											weight="bold"
+											color="var(--steam-accent)"
+										/>
+									{/if}
 								</span>
 								<span class="file-path" title={cleanFilename(entry.path)}
 									>{cleanFilename(entry.path)}</span
@@ -215,18 +243,17 @@
 <style>
 	.filter-bar {
 		background-color: var(--steam-panel);
-		padding: 0.35rem 0.5rem;
+		padding: 0.25rem 0.5rem;
 		border-bottom: 1px solid var(--steam-border-dark);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 0.35rem;
 		flex-shrink: 0;
-		flex-wrap: wrap;
 		box-sizing: border-box;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.filter-bar {
 			padding: 0.375rem 0.75rem;
 			gap: 0.5rem;
@@ -237,13 +264,25 @@
 		display: flex;
 		align-items: center;
 		gap: 0.25rem;
-		flex-wrap: wrap;
-		width: 100%;
+		white-space: nowrap;
+		flex-wrap: nowrap;
 	}
 
-	@media (min-width: 640px) {
-		.filter-group {
-			width: auto;
+	.btn-mobile {
+		display: inline;
+	}
+
+	.btn-desktop {
+		display: none;
+	}
+
+	@container (width >= 600px) {
+		.btn-mobile {
+			display: none;
+		}
+
+		.btn-desktop {
+			display: inline;
 		}
 	}
 
@@ -252,17 +291,31 @@
 		font-family: var(--steam-font-sans);
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		width: 100%;
+		gap: 0.25rem;
 		color: var(--steam-text);
-		padding-top: 0.125rem;
+		white-space: nowrap;
+		flex-shrink: 0;
 	}
 
-	@media (min-width: 640px) {
+	.net-label-short {
+		display: inline;
+	}
+
+	.net-label-full {
+		display: none;
+	}
+
+	@container (width >= 600px) {
 		.net-size-label {
-			width: auto;
 			font-size: var(--steam-fs-sm);
-			padding-top: 0;
+		}
+
+		.net-label-short {
+			display: none;
+		}
+
+		.net-label-full {
+			display: inline;
 		}
 	}
 
@@ -294,7 +347,7 @@
 		user-select: none;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.table-header {
 			padding: 0.375rem 0.75rem;
 			font-size: var(--steam-fs-sm);
@@ -340,7 +393,7 @@
 		background-color: var(--steam-accent-dim);
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.diff-row {
 			padding: 0 0.75rem;
 			gap: 1rem;
@@ -356,43 +409,25 @@
 		flex: 1;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.file-path-group {
 			gap: 0.5rem;
 		}
 	}
 
-	.status-badge {
+	.status-icon-wrap {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		width: 1rem;
 		height: 1rem;
-		font-weight: bold;
-		font-size: var(--steam-fs-xs);
 		flex-shrink: 0;
-		background-color: var(--steam-darkpanel);
-		color: var(--steam-darkest);
-		user-select: none;
 	}
 
-	.status-badge.status-added {
-		background-color: var(--steam-green);
-	}
-
-	.status-badge.status-removed {
-		background-color: var(--steam-red);
-	}
-
-	.status-badge.status-modified {
-		background-color: var(--steam-accent);
-	}
-
-	@media (min-width: 640px) {
-		.status-badge {
+	@container (width >= 600px) {
+		.status-icon-wrap {
 			width: var(--steam-h-control-xs);
 			height: var(--steam-h-control-xs);
-			font-size: var(--steam-fs-sm);
 		}
 	}
 
@@ -405,7 +440,7 @@
 		user-select: text;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.file-path {
 			font-size: var(--steam-fs-base);
 		}
@@ -418,7 +453,7 @@
 		user-select: none;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.size-info {
 			font-size: var(--steam-fs-sm);
 		}

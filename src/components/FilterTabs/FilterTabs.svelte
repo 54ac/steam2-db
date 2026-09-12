@@ -47,7 +47,7 @@
 		box-sizing: border-box;
 	}
 
-	@media (max-width: 640px) {
+	@container (width < 640px) {
 		.filter-tabs-root {
 			display: none;
 			padding: 0 0.375rem;
@@ -68,7 +68,7 @@
 		height: 100%;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 640px) {
 		.left-group {
 			width: auto;
 		}
@@ -79,7 +79,7 @@
 		align-items: center;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 640px) {
 		.right-group {
 			display: flex;
 		}

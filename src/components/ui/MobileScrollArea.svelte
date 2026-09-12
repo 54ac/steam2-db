@@ -49,12 +49,12 @@
 	</div>
 	{#if canScrollLeft}
 		<div class="scroll-fade left" aria-hidden="true">
-			<CaretLeftIcon size={11} />
+			<CaretLeftIcon size={11} weight="bold" />
 		</div>
 	{/if}
 	{#if canScrollRight}
 		<div class="scroll-fade right" aria-hidden="true">
-			<CaretRightIcon size={11} />
+			<CaretRightIcon size={11} weight="bold" />
 		</div>
 	{/if}
 </div>
@@ -118,7 +118,7 @@
 		);
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.mobile-scroll-root.desktop-wrap .mobile-scroll-track {
 			overflow-x: visible;
 			flex-wrap: wrap;

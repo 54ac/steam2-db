@@ -114,23 +114,23 @@ export const extractManifestData = (
 		return null;
 	}
 
-	const buildKey = currentBuild.c
-		? `${currentBuild.v}_${currentBuild.c}`
-		: String(currentBuild.v);
+	const buildKey = currentBuild.crc32
+		? `${currentBuild.version}_${currentBuild.crc32}`
+		: String(currentBuild.version);
 	const cacheKey = `${depot.id}_${buildKey}`;
 	if (manifestDataCache.has(cacheKey)) {
 		return manifestDataCache.get(cacheKey)!;
 	}
 
-	const versionManifest = bundle[buildKey] || bundle[currentBuild.v];
+	const versionManifest = bundle[buildKey] || bundle[currentBuild.version];
 	if (!versionManifest) {
 		return null;
 	}
 
 	const data: ManifestData = {
 		depotId: depot.id,
-		version: currentBuild.v,
-		crc32: currentBuild.c,
+		version: currentBuild.version,
+		crc32: currentBuild.crc32,
 		files: versionManifest.files || [],
 		dumpFiles: versionManifest.dumpFiles || []
 	};
@@ -156,7 +156,7 @@ export const exportManifestAsTxt = (
 		`Depot: ${depot.depot || depot.game || depot.id}`,
 		`Depot ID: ${depot.id}`,
 		`Parent App ID: ${depot.appId || depot.id}`,
-		`Build Date: ${depot.builds?.[buildIndex]?.d || "Unknown"}`,
+		`Build Date: ${depot.builds?.[buildIndex]?.date || "Unknown"}`,
 		`Total Files: ${manifestData.files.length}`,
 		"----------------------------------------",
 		...manifestData.files.map((f) => `${f.p}\t${formatBytes(f.s)}`)

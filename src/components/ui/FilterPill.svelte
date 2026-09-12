@@ -79,9 +79,11 @@
 		color: var(--steam-red);
 	}
 
-	.filter-pill:hover:not(:disabled) {
-		background-color: var(--steam-panel-hover);
-		color: white;
+	@media (hover: hover) {
+		.filter-pill:hover:not(:disabled) {
+			background-color: var(--steam-panel-hover);
+			color: white;
+		}
 	}
 
 	.filter-pill:disabled {
@@ -89,10 +91,17 @@
 		cursor: default;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 600px) {
 		.filter-pill {
 			padding: 0.125rem 0.5rem;
 			font-size: var(--steam-fs-sm);
+		}
+	}
+
+	@media (hover: none) and (pointer: coarse) {
+		.filter-pill {
+			min-height: 1.625rem;
+			padding: 0.125rem 0.5rem;
 		}
 	}
 </style>

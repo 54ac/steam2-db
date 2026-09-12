@@ -10,10 +10,12 @@
 		getEarliestDate,
 		onActionKey
 	} from "../../utils/formatters";
+	import { CaretDownIcon, CaretUpIcon } from "phosphor-svelte";
 	import ReleaseDeltaBadge from "./ReleaseDeltaBadge.svelte";
 	import TitleCell from "./TitleCell.svelte";
 	import FileMatchPill from "./FileMatchPill.svelte";
 	import SteamDbLink from "../ui/SteamDbLink.svelte";
+	import IconButton from "../ui/IconButton.svelte";
 
 	interface Props {
 		app: AppGroup;
@@ -21,6 +23,8 @@
 	}
 
 	let { app, isEven = false }: Props = $props();
+
+	let isExpanded = $state(false);
 
 	const store = getCatalogStore();
 
@@ -83,7 +87,7 @@
 			class="depots-container"
 			aria-label={`Depots belonging to ${app.game}`}
 		>
-			{#each app.depots as depot (depot.id)}
+			{#each app.depots as depot, idx (depot.id)}
 				{@const hasManifest = Boolean(depot.builds && depot.builds.length > 0)}
 				{@const isMatched = store.depotMatchMap.has(depot.id)}
 				{@const info = getDepotDisplayName(depot)}
@@ -100,6 +104,7 @@
 					class="depot-chip-btn"
 					class:has-manifest={hasManifest}
 					class:matched={isMatched}
+					class:mobile-hidden={!isExpanded && idx >= 2 && !isMatched}
 					disabled={!hasManifest}
 					onclick={(e) => handleChipClick(e, depot)}
 					title={hasManifest
@@ -114,6 +119,29 @@
 					{/if}
 				</button>
 			{/each}
+			{#if app.depots.length > 2}
+				<IconButton
+					variant="raised"
+					class="depot-expand-btn"
+					onclick={(e) => {
+						e.stopPropagation();
+						isExpanded = !isExpanded;
+					}}
+					title={isExpanded
+						? "Collapse depots"
+						: `Show all ${app.depots.length} depots`}
+					ariaLabel={isExpanded
+						? "Collapse depots"
+						: `Show all ${app.depots.length} depots`}
+					aria-expanded={isExpanded}
+				>
+					{#if isExpanded}
+						<CaretUpIcon size={11} weight="bold" />
+					{:else}
+						<CaretDownIcon size={11} weight="bold" />
+					{/if}
+				</IconButton>
+			{/if}
 		</div>
 	</TitleCell>
 
@@ -154,7 +182,6 @@
 		border: 1px solid var(--steam-chip-border);
 		font-family: var(--steam-font-sans);
 		font-size: var(--steam-fs-xs);
-		transition: background-color 0.1s ease;
 		line-height: normal;
 		display: inline-flex;
 		align-items: center;
@@ -197,5 +224,20 @@
 
 	.depot-id-label.has-manifest {
 		color: var(--steam-text);
+	}
+
+	:global(.depot-expand-btn) {
+		display: none;
+		min-height: 1.25rem;
+	}
+
+	@container (width < 640px) {
+		.depot-chip-btn.mobile-hidden {
+			display: none;
+		}
+
+		:global(.depot-expand-btn) {
+			display: inline-flex;
+		}
 	}
 </style>

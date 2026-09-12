@@ -28,25 +28,35 @@
 
 	const versionCounts = $derived.by(() => {
 		const counts = new SvelteMap<number, number>();
-		for (let i = 0; i < builds.length; i++) {
-			const v = builds[i].v;
-			counts.set(v, (counts.get(v) || 0) + 1);
+		for (const build of builds) {
+			counts.set(build.version, (counts.get(build.version) || 0) + 1);
 		}
 		return counts;
 	});
 
-	const formatLabel = (build: DepotBuild, isDup: boolean): string => {
-		const crcSuffix = isDup && build.c ? ` · ${build.c}` : "";
-		const crcParen = isDup && build.c ? ` (${build.c})` : "";
-		const main = build.d
-			? `${build.d} (v${build.v}${crcSuffix})`
-			: `Build ${build.v}${crcParen}`;
-		return prefix ? `(${prefix}) ${main}` : main;
-	};
+	const formatLabel = (build: DepotBuild, isDuplicate: boolean): string => {
+		const { version, crc32, date, versionStr, parentCrc, previousVersion } =
+			build;
+		const crcSuffix = isDuplicate && crc32 ? ` · ${crc32}` : "";
+		const verDisplay = versionStr
+			? `${versionStr} (v${version})`
+			: `v${version}`;
+		const isRoot =
+			previousVersion === undefined && (!parentCrc || parentCrc === "00000000");
+		let lineageTag = "";
+		if (isRoot) {
+			lineageTag = " [Root]";
+		} else if (
+			previousVersion !== undefined &&
+			previousVersion !== version - 1
+		) {
+			lineageTag = ` [from v${previousVersion}]`;
+		}
+		const main = date
+			? `${date} · ${verDisplay}${crcSuffix}${lineageTag}`
+			: `${verDisplay}${crcSuffix}${lineageTag}`;
 
-	const handleChange = (e: Event) => {
-		const target = e.target as HTMLSelectElement;
-		onchange(parseInt(target.value, 10));
+		return prefix ? `(${prefix}) ${main}` : main;
 	};
 </script>
 
@@ -54,15 +64,15 @@
 	{id}
 	class="steam-select {className}"
 	{value}
-	onchange={handleChange}
+	onchange={(e) => onchange(Number(e.currentTarget.value))}
 	aria-label={ariaLabel}
 >
-	{#each builds as b, idx (idx)}
-		{@const isDup = (versionCounts.get(b.v) || 0) > 1}
+	{#each builds as build, idx (idx)}
+		{@const isDuplicate = (versionCounts.get(build.version) || 0) > 1}
 		{@const isDisabled = disabledIndex !== undefined && idx === disabledIndex}
 		{@const suffix = isDisabled && disabledSuffix ? disabledSuffix : ""}
 		<option value={idx} disabled={isDisabled}>
-			{formatLabel(b, isDup)}{suffix}
+			{formatLabel(build, isDuplicate)}{suffix}
 		</option>
 	{/each}
 </select>
