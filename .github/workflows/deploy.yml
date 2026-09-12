@@ -5,6 +5,15 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      target_env:
+        description: "Deployment target"
+        required: true
+        default: "stg"
+        type: choice
+        options:
+          - stg
+          - prod
 
 permissions:
   contents: read
@@ -33,10 +42,21 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      - name: Determine target branch
+        id: target
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.target_env }}" = "prod" ]; then
+            echo "Deploying to PRODUCTION (branch: main)"
+            echo "branch=main" >> "$GITHUB_OUTPUT"
+          else
+            echo "Deploying to STAGING (branch: stg)"
+            echo "branch=stg" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=steam2-db --branch=stg
+          command: pages deploy dist --project-name=steam2-db --branch=${{ steps.target.outputs.branch }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
