@@ -407,7 +407,7 @@ export const fetchCandidatePostings = async (
 	cfg: TrigramConfig,
 	entries: TrigramEntry[],
 	maxFetch: number,
-	limit: number,
+	limit?: number,
 	signal?: AbortSignal
 ): Promise<number[]> => {
 	if (entries.length === 0 || signal?.aborted) {
@@ -433,7 +433,7 @@ export const fetchCandidatePostings = async (
 		return [];
 	}
 	const candidateSet = new Set<number>();
-	const maxCandidates = Math.min(cfg.numFiles, limit * 15, 1500);
+	const maxCandidates = limit ? Math.min(cfg.numFiles, limit * 15, 1500) : 2000;
 	for (const list of postingsLists) {
 		for (let i = 0; i < Math.min(list.length, 100); i++) {
 			candidateSet.add(list[i]);
@@ -480,12 +480,12 @@ export const searchWildcardCandidates = async (
 	cfg: TrigramConfig,
 	dir: DataView,
 	query: string,
-	limit: number,
+	limit?: number,
 	signal?: AbortSignal
 ): Promise<number[]> => {
 	const literals = query.split(/[*?]+/).filter((s: string) => s.length > 0);
 	if (literals.length === 0) {
-		return Array.from({ length: limit * 2 }, (_, i) => i);
+		return Array.from({ length: limit ? limit * 2 : 2000 }, (_, i) => i);
 	}
 
 	const trigramEntries: TrigramEntry[] = [];
@@ -521,9 +521,6 @@ export const searchWildcardCandidates = async (
 	let candidates = postingsLists[0];
 	for (let i = 1; i < postingsLists.length; i++) {
 		candidates = intersectSorted(candidates, postingsLists[i]);
-		if (candidates.length <= limit) {
-			break;
-		}
 	}
 	return candidates;
 };
@@ -535,7 +532,7 @@ export const searchSingleCharCandidates = async (
 	cfg: TrigramConfig,
 	dir: DataView,
 	query: string,
-	limit: number,
+	limit?: number,
 	signal?: AbortSignal
 ): Promise<number[]> => {
 	const c0 = query.charCodeAt(0) & 0xff;
@@ -557,7 +554,7 @@ export const searchDoubleCharCandidates = async (
 	cfg: TrigramConfig,
 	dir: DataView,
 	query: string,
-	limit: number,
+	limit?: number,
 	signal?: AbortSignal
 ): Promise<number[]> => {
 	const c0 = query.charCodeAt(0) & 0xff;
@@ -603,7 +600,7 @@ export const searchTrigramCandidates = async (
 	cfg: TrigramConfig,
 	dir: DataView,
 	query: string,
-	limit: number,
+	_limit?: number,
 	signal?: AbortSignal
 ): Promise<number[]> => {
 	const trigrams: TrigramEntry[] = [];
@@ -617,7 +614,7 @@ export const searchTrigramCandidates = async (
 	}
 
 	trigrams.sort((a, b) => a.count - b.count);
-	const toFetch = trigrams.slice(0, Math.min(3, trigrams.length));
+	const toFetch = trigrams.slice(0, Math.min(4, trigrams.length));
 	const postingsLists = await Promise.all(
 		toFetch.map(async (t) => {
 			if (signal?.aborted) {
@@ -640,9 +637,6 @@ export const searchTrigramCandidates = async (
 	let candidates = postingsLists[0];
 	for (let i = 1; i < postingsLists.length; i++) {
 		candidates = intersectSorted(candidates, postingsLists[i]);
-		if (candidates.length <= limit) {
-			break;
-		}
 	}
 	return candidates;
 };
@@ -678,7 +672,7 @@ export const resolveCandidatesForQuery = async (
 	isWildcard: boolean,
 	cfg: TrigramConfig,
 	dir: DataView,
-	limit: number,
+	limit: number | undefined,
 	signal: AbortSignal
 ): Promise<number[]> => {
 	if (isWildcard) {

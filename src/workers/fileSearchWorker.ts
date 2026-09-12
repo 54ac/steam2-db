@@ -44,10 +44,17 @@ const fetchBatchLookup = async (
 		return null;
 	}
 	try {
-		const targetIds = fileIds.slice(0, 200);
-		const res = await fetch(`/api/lookup?ids=${targetIds.join(",")}`, {
-			signal
-		});
+		const res =
+			fileIds.length > 100
+				? await fetch("/api/lookup", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ ids: fileIds }),
+						signal
+					})
+				: await fetch(`/api/lookup?ids=${fileIds.join(",")}`, {
+						signal
+					});
 		if (!res.ok) {
 			if (res.status >= 500) {
 				markEdgeApiFailed();
@@ -76,15 +83,16 @@ const fetchBatchLookup = async (
  */
 const fetchApiSearch = async (
 	query: string,
-	limit: number,
+	limit?: number,
 	signal?: AbortSignal
 ): Promise<QueryResultPayload | null> => {
 	if (!isEdgeApiAvailable()) {
 		return null;
 	}
 	try {
+		const limitParam = limit ? `&limit=${limit}` : "";
 		const res = await fetch(
-			`/api/search?q=${encodeURIComponent(query)}&limit=${limit}`,
+			`/api/search?q=${encodeURIComponent(query)}${limitParam}`,
 			{ signal }
 		);
 		if (!res.ok) {
@@ -118,7 +126,7 @@ const processBatchResults = (
 	}>,
 	cleanQuery: string,
 	wildcardRegex: RegExp | null,
-	limit: number
+	limit?: number
 ): Array<{ filename: string; fileId: number; depots: DepotBuildInfo[] }> => {
 	const scored: Array<{
 		item: (typeof batchResults)[0];
@@ -142,7 +150,7 @@ const processBatchResults = (
 
 		scored.push({ item, score });
 		setCachedMetadata(item.fileId, item.filename, item.depots);
-		if (scored.length >= limit * 8) {
+		if (scored.length >= (limit ?? 2000) * 8) {
 			break;
 		}
 	}
@@ -151,7 +159,7 @@ const processBatchResults = (
 		(a, b) =>
 			b.score - a.score || a.item.filename.localeCompare(b.item.filename)
 	);
-	return scored.slice(0, limit).map((s) => s.item);
+	return scored.slice(0, limit ?? 2000).map((s) => s.item);
 };
 
 /**
@@ -163,7 +171,7 @@ const processLocalCandidates = async (
 	blockIndex: DataView,
 	cleanQuery: string,
 	wildcardRegex: RegExp | null,
-	limit: number,
+	limit: number | undefined,
 	signal: AbortSignal
 ): Promise<Array<{
 	filename: string;
@@ -199,7 +207,7 @@ const processLocalCandidates = async (
 		}
 
 		scoredCandidates.push({ candidate: { filename, fileId }, score });
-		if (scoredCandidates.length >= limit * 8) {
+		if (scoredCandidates.length >= (limit ?? 2000) * 8) {
 			break;
 		}
 	}
@@ -213,7 +221,7 @@ const processLocalCandidates = async (
 			b.score - a.score ||
 			a.candidate.filename.localeCompare(b.candidate.filename)
 	);
-	const topCandidates = scoredCandidates.slice(0, limit);
+	const topCandidates = scoredCandidates.slice(0, limit ?? 2000);
 	const matchedFileIds = topCandidates.map((m) => m.candidate.fileId);
 	await loadDepotsCoalesced(cfg, matchedFileIds, signal);
 	if (signal.aborted) {
@@ -232,7 +240,7 @@ const processLocalCandidates = async (
  */
 const executeSearch = async (
 	cleanQuery: string,
-	limit: number,
+	limit: number | undefined,
 	signal: AbortSignal
 ): Promise<Array<{
 	filename: string;
@@ -259,7 +267,9 @@ const executeSearch = async (
 	}
 
 	const wildcardRegex = buildWildcardRegex(cleanQuery, isWildcard);
-	const candidateSlice = candidates.slice(0, Math.min(candidates.length, 2500));
+	const candidateSlice = limit
+		? candidates.slice(0, Math.min(candidates.length, limit * 10))
+		: candidates.slice(0, 2000);
 
 	const batchResults = await fetchBatchLookup(candidateSlice, signal);
 	if (batchResults && batchResults.length > 0) {
@@ -276,56 +286,69 @@ const executeSearch = async (
 	);
 };
 
+const abortActiveSearch = (): void => {
+	if (activeAbortController) {
+		activeAbortController.abort();
+		activeAbortController = null;
+	}
+};
+
+const sendCachedResult = (
+	id: number,
+	query: string,
+	cached: QueryResultPayload,
+	limit: number | undefined,
+	t0: number
+): void => {
+	self.postMessage({
+		id,
+		query,
+		matches: limit ? cached.matches.slice(0, limit) : cached.matches,
+		total: cached.total,
+		elapsedMs: performance.now() - t0
+	});
+};
+
+const sendEmptyResult = (id: number, query: string): void => {
+	self.postMessage({
+		id,
+		query,
+		matches: [],
+		total: 0,
+		elapsedMs: 0
+	});
+};
+
 /** Main Web Worker message listener handling search requests and stream coordination. */
 self.onmessage = async (e: MessageEvent) => {
 	if (e.data?.type === "abort") {
-		if (activeAbortController) {
-			activeAbortController.abort();
-			activeAbortController = null;
-		}
+		abortActiveSearch();
 		return;
 	}
 
-	const { id, query, limit = 100 } = e.data;
+	const { id, query, limit } = e.data;
 	const t0 = performance.now();
 	const cleanQuery = (query || "").trim().toLowerCase();
 
-	if (activeAbortController) {
-		activeAbortController.abort();
-	}
+	abortActiveSearch();
 	activeAbortController = new AbortController();
 	const signal = activeAbortController.signal;
 
 	try {
 		if (!cleanQuery) {
-			self.postMessage({
-				id,
-				query: cleanQuery,
-				matches: [],
-				total: 0,
-				elapsedMs: 0
-			});
+			sendEmptyResult(id, cleanQuery);
 			return;
 		}
 
 		const cachedResult = queryResultCache.get(cleanQuery);
 		if (cachedResult) {
-			self.postMessage({
-				id,
-				query: cleanQuery,
-				matches: cachedResult.matches.slice(0, limit),
-				total: cachedResult.total,
-				elapsedMs: performance.now() - t0
-			});
+			sendCachedResult(id, cleanQuery, cachedResult, limit, t0);
 			return;
 		}
 
 		// Try fast Edge 1-request search first
 		const apiResult = await fetchApiSearch(cleanQuery, limit, signal);
-		if (apiResult) {
-			if (signal.aborted) {
-				return;
-			}
+		if (apiResult && !signal.aborted) {
 			queryResultCache.set(cleanQuery, apiResult);
 			self.postMessage({
 				id,

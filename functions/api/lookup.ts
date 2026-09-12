@@ -53,7 +53,7 @@ const parseIdsFromRequest = async (
  * Execution flow:
  * 1. Parse and validate file IDs from request (POST body or GET query param).
  * 2. Load global trigram metadata configuration and compressed filename block index (`ensureMeta`).
- * 3. Filter IDs to valid range [0, numFiles) and cap to 200 items per batch to prevent DoS.
+ * 3. Filter IDs to valid range [0, numFiles) and cap to 2000 items per batch to prevent DoS.
  * 4. Fetch only the required binary partitions in parallel (both filename partitions and depot partitions).
  * 5. Resolve filenames (with an in-memory blockCache to prevent duplicate decompression) and depot associations.
  * 6. Return results with aggressive caching (1 year) since historical archive data is static and immutable.
@@ -77,10 +77,10 @@ export const onRequest = async (context: EventContext): Promise<Response> => {
 		// Load static trigram metadata and filename block index (cached across requests in global scope)
 		const { cfg, blockIndex } = await ensureMeta(context.env, origin);
 
-		// Validate bounds: ensure file ID is within valid archive range, capped at 200 items per request
+		// Validate bounds: ensure file ID is within valid archive range and cap to 2000 items
 		const targetIds = Array.from(
 			new Set(ids.filter((fid) => fid >= 0 && fid < cfg.numFiles))
-		).slice(0, 200);
+		).slice(0, 2000);
 
 		if (targetIds.length === 0) {
 			return jsonResponse({ results: [] }, 200, 31536000);

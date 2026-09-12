@@ -105,8 +105,7 @@ export const createFileSearch = (
 			isWorkerActive = true;
 			worker?.postMessage({
 				id: reqId,
-				query: q,
-				limit: 100
+				query: q
 			});
 		}, debounceMs);
 

@@ -107,7 +107,7 @@ const intersectSorted = (a: number[], b: number[]): number[] => {
  */
 const parseSearchRequest = async (
 	request: Request
-): Promise<{ query: string; limit: number } | null> => {
+): Promise<{ query: string; limit?: number } | null> => {
 	if (request.method === "POST") {
 		try {
 			const body = (await request.json()) as {
@@ -115,8 +115,7 @@ const parseSearchRequest = async (
 				limit?: number;
 			};
 			const query = body.query || "";
-			const limit =
-				body.limit && body.limit > 0 ? Math.min(body.limit, 200) : 100;
+			const limit = body.limit && body.limit > 0 ? body.limit : undefined;
 			return { query, limit };
 		} catch {
 			return null;
@@ -125,12 +124,12 @@ const parseSearchRequest = async (
 	const url = new URL(request.url);
 	const query =
 		url.searchParams.get("q") || url.searchParams.get("query") || "";
-	let limit = 100;
+	let limit: number | undefined;
 	const limitParam = url.searchParams.get("limit");
 	if (limitParam) {
 		const parsed = parseInt(limitParam, 10);
 		if (!isNaN(parsed) && parsed > 0) {
-			limit = Math.min(parsed, 200);
+			limit = parsed;
 		}
 	}
 	return { query, limit };
@@ -194,8 +193,7 @@ const resolveCandidates = async (
 	topTrigrams: TrigramEntry[],
 	cfg: TrigramConfig,
 	partitionMap: Map<number, Uint8Array>,
-	fetchPartitions: (indices: number[]) => Promise<void>,
-	limit: number
+	fetchPartitions: (indices: number[]) => Promise<void>
 ): Promise<number[]> => {
 	const postingParts = new Set<number>();
 	for (const t of topTrigrams) {
@@ -221,9 +219,6 @@ const resolveCandidates = async (
 	let candidates = postingsLists[0] || [];
 	for (let i = 1; i < postingsLists.length; i++) {
 		candidates = intersectSorted(candidates, postingsLists[i]);
-		if (candidates.length <= limit) {
-			break;
-		}
 	}
 	return candidates;
 };
@@ -295,7 +290,7 @@ const resolveShortQueryCandidates = async (
 	cfg: TrigramConfig,
 	partitionMap: Map<number, Uint8Array>,
 	fetchPartitions: (indices: number[]) => Promise<void>,
-	limit: number
+	limit?: number
 ): Promise<number[]> => {
 	const selectedTrigrams = scanMatchingShortTrigrams(
 		dirView,
@@ -318,7 +313,7 @@ const resolveShortQueryCandidates = async (
 	await fetchPartitions(Array.from(postingParts));
 
 	const candidateSet = new Set<number>();
-	const maxCandidates = Math.min(cfg.numFiles, limit * 15, 1500);
+	const maxCandidates = limit ? Math.min(cfg.numFiles, limit * 15, 1500) : 2000;
 
 	for (const t of selectedTrigrams) {
 		const bytes = readGlobalBytes(
@@ -349,18 +344,12 @@ const selectCandidates = async (
 	cfg: TrigramConfig,
 	partitionMap: Map<number, Uint8Array>,
 	fetchPartitions: (indices: number[]) => Promise<void>,
-	limit: number
+	limit?: number
 ): Promise<number[]> => {
 	if (trigrams && trigrams.length > 0) {
 		trigrams.sort((a, b) => a.count - b.count);
-		const topTrigrams = trigrams.slice(0, Math.min(3, trigrams.length));
-		return resolveCandidates(
-			topTrigrams,
-			cfg,
-			partitionMap,
-			fetchPartitions,
-			limit
-		);
+		const topTrigrams = trigrams.slice(0, Math.min(4, trigrams.length));
+		return resolveCandidates(topTrigrams, cfg, partitionMap, fetchPartitions);
 	}
 	if (cleanQuery.length === 1 || cleanQuery.length === 2) {
 		return resolveShortQueryCandidates(
@@ -441,7 +430,7 @@ const findScoredMatches = (
 	partitionMap: Map<number, Uint8Array>,
 	wildcardRegex: RegExp | null,
 	cleanQuery: string,
-	limit: number,
+	limit?: number,
 	blockCache?: Map<number, string[]>
 ): { fid: number; fn: string; score: number }[] => {
 	const scoredMatches: { fid: number; fn: string; score: number }[] = [];
@@ -458,7 +447,7 @@ const findScoredMatches = (
 		if (isMatch) {
 			const score = scoreMatch(lower, cleanQuery);
 			scoredMatches.push({ fid, fn, score });
-			if (scoredMatches.length >= limit * 8) {
+			if (scoredMatches.length >= (limit ?? 2000) * 8) {
 				break;
 			}
 		}
@@ -554,11 +543,9 @@ export const onRequest = async (context: EventContext): Promise<Response> => {
 			wildcardRegex = new RegExp(compileWildcardPattern(cleanQuery), "i");
 		}
 
-		// Cap candidate inspection to prevent CPU timeout on broad matches
-		const targetCandidates = candidates.slice(
-			0,
-			Math.min(candidates.length, 2500)
-		);
+		const targetCandidates = limit
+			? candidates.slice(0, Math.min(candidates.length, limit * 10))
+			: candidates.slice(0, 2000);
 
 		// Step 5: Prefetch string data partitions containing candidate filenames
 		await fetchFilenamePartitions(
@@ -583,7 +570,7 @@ export const onRequest = async (context: EventContext): Promise<Response> => {
 
 		// Step 7: Sort by relevance score descending, then alphabetical
 		scoredMatches.sort((a, b) => b.score - a.score || a.fn.localeCompare(b.fn));
-		const topMatches = scoredMatches.slice(0, limit);
+		const topMatches = scoredMatches.slice(0, limit ?? 2000);
 		const matchedFileIds = topMatches.map((m) => m.fid);
 		const matchedFilenames = new Map(topMatches.map((m) => [m.fid, m.fn]));
 
