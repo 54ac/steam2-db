@@ -1,0 +1,6 @@
+{
+	"useTabs": true,
+	"singleQuote": false,
+	"trailingComma": "none",
+	"plugins": ["prettier-plugin-svelte"]
+}

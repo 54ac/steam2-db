@@ -1,0 +1,28 @@
+{
+	"extends": ["stylelint-config-standard", "stylelint-config-html/svelte"],
+	"ignoreFiles": ["dist/**", "node_modules/**", "public/**"],
+	"rules": {
+		"selector-class-pattern": null,
+		"selector-pseudo-class-no-unknown": [
+			true,
+			{
+				"ignorePseudoClasses": ["global"]
+			}
+		],
+		"property-no-unknown": [
+			true,
+			{
+				"ignoreProperties": ["-webkit-font-smoothing"]
+			}
+		],
+		"property-no-vendor-prefix": null,
+		"media-feature-range-notation": "prefix",
+		"no-descending-specificity": null,
+		"import-notation": "string",
+		"alpha-value-notation": "number",
+		"color-function-notation": null,
+		"color-function-alias-notation": null,
+		"declaration-property-value-keyword-no-deprecated": null,
+		"rule-empty-line-before": null
+	}
+}
