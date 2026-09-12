@@ -1,4 +1,5 @@
 name: Deploy to Cloudflare Pages
+run-name: "[${{ inputs.target_env || 'stg' }}] ${{ github.event.head_commit.message || github.sha }}"
 
 on:
   push:
@@ -42,21 +43,31 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - name: Determine target branch
+      - name: Determine target branch and commit metadata
         id: target
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.target_env }}" = "prod" ]; then
             echo "Deploying to PRODUCTION (branch: main)"
             echo "branch=main" >> "$GITHUB_OUTPUT"
+            echo "env=prod" >> "$GITHUB_OUTPUT"
           else
             echo "Deploying to STAGING (branch: stg)"
             echo "branch=stg" >> "$GITHUB_OUTPUT"
+            echo "env=stg" >> "$GITHUB_OUTPUT"
           fi
+          COMMIT_MSG=$(git log -1 --pretty=%s | sed 's/["`$\\]//g')
+          COMMIT_HASH=$(git rev-parse HEAD)
+          echo "commit_msg=$COMMIT_MSG" >> "$GITHUB_OUTPUT"
+          echo "commit_hash=$COMMIT_HASH" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=steam2-db --branch=${{ steps.target.outputs.branch }}
+          command: pages deploy dist --project-name=steam2-db --branch=${{ steps.target.outputs.branch }} --commit-hash=${{ steps.target.outputs.commit_hash }} --commit-message="${{ steps.target.outputs.commit_msg }}" --commit-dirty=false
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Write run summary
+        run: |
+          echo "Deployed [${{ steps.target.outputs.env }}] ${{ steps.target.outputs.commit_msg }}" >> "$GITHUB_STEP_SUMMARY"
