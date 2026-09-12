@@ -7,7 +7,7 @@ import prettierConfig from "eslint-config-prettier";
 import svelteParser from "svelte-eslint-parser";
 
 export default tseslint.config(
-	{ ignores: ["dist", "node_modules", "public"] },
+	{ ignores: ["dist", "node_modules", "public", "pipeline"] },
 	sonarjs.configs.recommended,
 	js.configs.recommended,
 	...tseslint.configs.recommended,
