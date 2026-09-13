@@ -133,13 +133,13 @@
 	.files-wrapper {
 		display: flex;
 		flex-direction: column;
-		gap: 0.2rem;
+		gap: 0.25rem;
 	}
 
 	.files-flex-container {
 		display: flex;
 		align-items: center;
-		gap: 0.35rem;
+		gap: 0.375rem;
 		flex-wrap: wrap;
 		max-width: 100%;
 	}
@@ -147,7 +147,7 @@
 	.file-chip-btn {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.3rem;
+		gap: 0.25rem;
 		padding: 0.125rem 0.375rem;
 		background-color: var(--steam-chip-bg);
 		border: 1px solid var(--steam-chip-border);
@@ -161,10 +161,12 @@
 		box-sizing: border-box;
 	}
 
-	.file-chip-btn:hover {
-		background-color: var(--steam-hover-bg);
-		border-color: var(--steam-accent);
-		color: white;
+	@media (hover: hover) {
+		.file-chip-btn:hover {
+			background-color: var(--steam-hover-bg);
+			border-color: var(--steam-accent);
+			color: white;
+		}
 	}
 
 	.file-chip-name {

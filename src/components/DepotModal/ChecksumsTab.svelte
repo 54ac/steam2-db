@@ -122,7 +122,7 @@
 
 	@container (width >= 600px) {
 		.table-header {
-			padding: 0.375rem 0.75rem;
+			padding: 0.375rem 0.5rem;
 			font-size: var(--steam-fs-sm);
 		}
 	}
@@ -150,8 +150,6 @@
 	}
 
 	.dump-card-item {
-		list-style: none;
-		margin: 0;
 		padding: 0;
 	}
 
@@ -209,7 +207,7 @@
 	.field-row {
 		display: flex;
 		flex-direction: column;
-		gap: 0.2rem;
+		gap: 0.25rem;
 	}
 
 	@container (width >= 600px) {
@@ -224,7 +222,7 @@
 	.field-label-group {
 		display: flex;
 		align-items: center;
-		gap: 0.35rem;
+		gap: 0.375rem;
 	}
 
 	@container (width >= 600px) {
@@ -267,7 +265,7 @@
 	.value-box {
 		background-color: var(--steam-darkest);
 		border: 1px solid var(--steam-border-dark);
-		padding: 0.3rem 0.45rem;
+		padding: 0.25rem 0.5rem;
 		font-family: var(--steam-font-mono);
 		font-size: var(--steam-fs-xs);
 		line-height: 1.4;
@@ -283,7 +281,6 @@
 	@container (width >= 600px) {
 		.value-box {
 			font-size: var(--steam-fs-sm);
-			padding: 0.25rem 0.5rem;
 			letter-spacing: 0;
 		}
 	}

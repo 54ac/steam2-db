@@ -20,12 +20,6 @@
 
 	let isExpanded = $state(false);
 
-	$effect(() => {
-		if (depot.id) {
-			isExpanded = false;
-		}
-	});
-
 	const info = $derived(getDepotDisplayName(depot));
 	const developer = $derived(formatDeveloper(depot.dev || depot.pub));
 
@@ -150,7 +144,7 @@
 		flex-shrink: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 0.35rem;
+		gap: 0.375rem;
 	}
 
 	.header-top-line {
@@ -219,7 +213,7 @@
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
-		gap: 0.35rem 0.625rem;
+		gap: 0.375rem 0.625rem;
 		font-size: var(--steam-fs-sm);
 		font-family: var(--steam-font-sans);
 		line-height: 1.35;
@@ -232,7 +226,6 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.25rem;
-		list-style: none;
 		line-height: 1.35;
 		white-space: nowrap;
 	}

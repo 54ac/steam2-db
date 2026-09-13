@@ -80,7 +80,6 @@
 		font-size: var(--steam-fs-sm);
 		font-weight: bold;
 		flex-shrink: 0;
-		list-style: none;
 		margin: 0;
 		box-sizing: border-box;
 		width: 100%;

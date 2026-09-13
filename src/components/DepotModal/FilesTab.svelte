@@ -218,9 +218,9 @@
 	const isEmpty = $derived(filteredFiles.length === 0);
 
 	$effect(() => {
-		if (files || viewMode) {
-			virtualizer.scrollToTop();
-		}
+		files.length;
+		viewMode;
+		virtualizer.scrollToTop();
 	});
 </script>
 
@@ -412,14 +412,16 @@
 		box-sizing: border-box;
 	}
 
-	.header-path-th:hover,
-	.header-size-th:hover {
-		background-color: var(--steam-panel-hover);
-		color: white;
+	@media (hover: hover) {
+		.header-path-th:hover,
+		.header-size-th:hover {
+			background-color: var(--steam-panel-hover);
+			color: white;
+		}
 	}
 
 	.header-size-th {
-		width: 6.5rem;
+		width: 6rem;
 		padding: 0.25rem 0.5rem;
 		cursor: pointer;
 		border: none;
@@ -440,7 +442,7 @@
 
 		.header-path-th,
 		.header-size-th {
-			padding: 0.375rem 0.75rem;
+			padding: 0.375rem 0.5rem;
 		}
 	}
 
@@ -499,13 +501,6 @@
 		}
 	}
 
-	@container (width >= 600px) {
-		.file-row {
-			padding: 0 0.75rem;
-			gap: 1rem;
-		}
-	}
-
 	.file-path-group {
 		display: flex;
 		align-items: center;
@@ -513,12 +508,6 @@
 		overflow: hidden;
 		min-width: 0;
 		flex: 1;
-	}
-
-	@container (width >= 600px) {
-		.file-path-group {
-			gap: 0.5rem;
-		}
 	}
 
 	.folder-toggle-btn {

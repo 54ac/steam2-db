@@ -169,10 +169,10 @@
 	}
 
 	.depots-container {
-		margin-top: 0.35rem;
+		margin-top: 0.375rem;
 		display: flex;
 		align-items: center;
-		gap: 0.35rem;
+		gap: 0.375rem;
 		flex-wrap: wrap;
 		width: 100%;
 	}
@@ -205,9 +205,11 @@
 		opacity: 1;
 	}
 
-	.depot-chip-btn.has-manifest:hover {
-		background-color: var(--steam-hover-bg);
-		color: white;
+	@media (hover: hover) {
+		.depot-chip-btn.has-manifest:hover {
+			background-color: var(--steam-hover-bg);
+			color: white;
+		}
 	}
 
 	.depot-chip-btn.matched {

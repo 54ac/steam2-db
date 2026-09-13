@@ -48,20 +48,14 @@
 			return;
 		}
 		try {
-			if (
-				typeof window !== "undefined" &&
-				window.isSecureContext &&
-				navigator.clipboard?.writeText
-			) {
-				await navigator.clipboard.writeText(text);
-				copied = true;
-				if (timer) {
-					clearTimeout(timer);
-				}
-				timer = setTimeout(() => {
-					copied = false;
-				}, timeout);
+			await navigator.clipboard.writeText(text);
+			copied = true;
+			if (timer) {
+				clearTimeout(timer);
 			}
+			timer = setTimeout(() => {
+				copied = false;
+			}, timeout);
 		} catch {
 			// Clipboard write failed or blocked
 		}

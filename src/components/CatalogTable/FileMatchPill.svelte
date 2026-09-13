@@ -13,7 +13,6 @@
 
 	let { matches }: Props = $props();
 
-	const hasMatches = $derived(Boolean(matches && matches.length > 0));
 	const first = $derived(matches?.[0]);
 	const extraCount = $derived((matches?.length ?? 0) - 1);
 	const titleText = $derived(
@@ -26,15 +25,15 @@
 	);
 </script>
 
-{#if hasMatches && first}
+{#if first}
 	<div class="file-match-pill" title={titleText}>
 		<FileIcon size={11} weight="bold" color="var(--steam-accent)" />
 		<span>{cleanFilename(first.filename)}</span>
 		{#if first.builds.length > 0}
-			<span class="build-tag">v{first.builds[0]}</span>
+			<span class="pill-tag">{`v${first.builds[0]}`}</span>
 		{/if}
 		{#if extraCount > 0}
-			<span class="more-tag">+{extraCount} more</span>
+			<span class="pill-tag accent">+{extraCount} more</span>
 		{/if}
 	</div>
 {/if}
@@ -43,7 +42,7 @@
 	.file-match-pill {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.3rem;
+		gap: 0.25rem;
 		font-family: var(--steam-font-sans);
 		font-size: var(--steam-fs-xs);
 		font-weight: normal;
@@ -59,13 +58,12 @@
 		text-overflow: ellipsis;
 	}
 
-	.build-tag {
+	.pill-tag {
 		color: var(--steam-text);
 		font-size: 0.625rem;
 	}
 
-	.more-tag {
+	.pill-tag.accent {
 		color: var(--steam-accent);
-		font-size: 0.625rem;
 	}
 </style>

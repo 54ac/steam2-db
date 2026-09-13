@@ -72,7 +72,7 @@
 	.mobile-scroll-track {
 		display: flex;
 		align-items: center;
-		gap: 0.35rem;
+		gap: 0.375rem;
 		overflow-x: auto;
 		scrollbar-width: none;
 		white-space: nowrap;

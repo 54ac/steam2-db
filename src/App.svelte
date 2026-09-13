@@ -2,7 +2,6 @@
 	import { onMount } from "svelte";
 	import { CatalogStore, setCatalogStore } from "./state/catalog.svelte";
 	import Header from "./components/Header.svelte";
-	import FilterTabs from "./components/FilterTabs/FilterTabs.svelte";
 	import Toolbar from "./components/Toolbar.svelte";
 	import CatalogTable from "./components/CatalogTable/CatalogTable.svelte";
 	import Pagination from "./components/Pagination.svelte";
@@ -18,7 +17,6 @@
 
 <div class="app-root">
 	<Header />
-	<FilterTabs />
 	<main class="main-content">
 		<Toolbar />
 		<CatalogTable />

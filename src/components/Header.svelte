@@ -1,102 +1,81 @@
 <script lang="ts">
-	import {
-		ListDashesIcon,
-		TreeStructureIcon,
-		FileTextIcon,
-		GithubLogoIcon
-	} from "phosphor-svelte";
-	import type { ViewMode } from "../types";
+	import { GithubLogoIcon } from "phosphor-svelte";
 	import { getCatalogStore } from "../state/catalog.svelte";
 	import { formatBytes } from "../utils/formatters";
-	import {
-		GITHUB_URL,
-		TOTAL_ARCHIVE_FILES,
-		VIEW_MODE_OPTIONS
-	} from "../constants";
-	import Button from "./ui/Button.svelte";
+	import { GITHUB_URL, TOTAL_ARCHIVE_FILES } from "../constants";
 	import IconButton from "./ui/IconButton.svelte";
+	import ViewSwitcher from "./FilterTabs/ViewSwitcher.svelte";
+	import CategoryFilters from "./FilterTabs/CategoryFilters.svelte";
 
 	const store = getCatalogStore();
-
-	const handleSelectMode = (mode: ViewMode) => {
-		store.setViewMode(mode);
-	};
 </script>
 
 <header class="header-root">
-	<div class="title-area">
-		<h1 class="title">Steam2 Browser</h1>
-		<IconButton
-			href={GITHUB_URL}
-			target="_blank"
-			title="GitHub repository (opens in new tab)"
-			ariaLabel="GitHub repository (opens in new tab)"
-		>
-			<GithubLogoIcon size={15} weight="bold" />
-		</IconButton>
+	<div class="header-main">
+		<div class="title-area">
+			<h1 class="title">Steam2 Browser</h1>
+			<IconButton
+				href={GITHUB_URL}
+				target="_blank"
+				title="GitHub repository (opens in new tab)"
+				ariaLabel="GitHub repository (opens in new tab)"
+			>
+				<GithubLogoIcon size={15} weight="bold" />
+			</IconButton>
+		</div>
+
+		<div class="v-divider" aria-hidden="true"></div>
+
+		<ViewSwitcher />
+
+		{#if store.viewMode === "depot" || store.viewMode === "app"}
+			<div class="v-divider nav-divider" aria-hidden="true"></div>
+
+			<div class="category-filters">
+				<CategoryFilters />
+			</div>
+		{/if}
 	</div>
 
-	<ul class="stats" aria-label="Archive catalog statistics">
-		<li class="stat-item">
-			<span>Depots:</span>
-			<strong class="stat-val">
-				{store.loading ? "..." : store.stats.totalDepots?.toLocaleString()}
-			</strong>
-		</li>
-		<li class="stat-item">
-			<span>Apps:</span>
-			<strong class="stat-val">
-				{store.loading ? "..." : store.appCatalog.length.toLocaleString()}
-			</strong>
-		</li>
-		<li class="stat-item">
-			<span>Files:</span>
-			<strong class="stat-val">
-				{store.loading ? "..." : TOTAL_ARCHIVE_FILES.toLocaleString()}
-			</strong>
-		</li>
-		<li class="stat-item">
-			<span>Size:</span>
-			<strong class="stat-val">
-				{store.loading ? "..." : formatBytes(store.stats.totalDumpBytes)}
-			</strong>
-		</li>
-	</ul>
-
-	<nav class="mobile-switcher" aria-label="View mode switcher">
-		{#each VIEW_MODE_OPTIONS as opt (opt.id)}
-			<Button
-				size="sm"
-				variant={store.viewMode === opt.id ? "sunken" : "raised"}
-				active={store.viewMode === opt.id}
-				disabled={store.loading}
-				class="mobile-btn"
-				onclick={() => handleSelectMode(opt.id)}
-				title={opt.title}
-			>
-				{#if opt.id === "depot"}
-					<ListDashesIcon size={12} weight="bold" />
-				{:else if opt.id === "app"}
-					<TreeStructureIcon size={12} weight="bold" />
-				{:else}
-					<FileTextIcon size={12} weight="bold" />
-				{/if}
-				<span>{opt.label}</span>
-			</Button>
-		{/each}
-	</nav>
+	<div class="header-stats-group">
+		<ul class="stats" aria-label="Archive catalog statistics">
+			<li class="stat-item">
+				<span>Depots:</span>
+				<strong class="stat-val">
+					{store.loading ? "..." : store.stats.totalDepots?.toLocaleString()}
+				</strong>
+			</li>
+			<li class="stat-item">
+				<span>Apps:</span>
+				<strong class="stat-val">
+					{store.loading ? "..." : store.appCatalog.length.toLocaleString()}
+				</strong>
+			</li>
+			<li class="stat-item">
+				<span>Files:</span>
+				<strong class="stat-val">
+					{store.loading ? "..." : TOTAL_ARCHIVE_FILES.toLocaleString()}
+				</strong>
+			</li>
+			<li class="stat-item">
+				<span>Size:</span>
+				<strong class="stat-val">
+					{store.loading ? "..." : formatBytes(store.stats.totalDumpBytes)}
+				</strong>
+			</li>
+		</ul>
+	</div>
 </header>
 
 <style>
 	.header-root {
 		background-color: var(--steam-panel);
 		border-bottom: 1px solid var(--steam-border-dark);
-		box-shadow: 0 1px 0 var(--steam-border-light);
 		user-select: none;
 		flex-shrink: 0;
 		z-index: 5;
 		box-sizing: border-box;
-		padding: max(0.4rem, env(safe-area-inset-top)) 0.375rem 0.35rem;
+		padding: max(0.375rem, env(safe-area-inset-top)) 0.375rem 0.375rem;
 		min-height: 2.375rem;
 		display: flex;
 		align-items: center;
@@ -104,13 +83,11 @@
 		gap: 0.25rem;
 	}
 
-	@container (width >= 640px) {
-		.header-root {
-			padding: 0 0.75rem;
-			height: var(--steam-h-bar);
-			min-height: var(--steam-h-bar);
-			gap: 0.5rem;
-		}
+	.header-main {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-width: 0;
 	}
 
 	.title-area {
@@ -131,34 +108,43 @@
 		white-space: nowrap;
 	}
 
-	@container (width >= 400px) {
-		.title {
-			font-size: var(--steam-fs-md);
-			letter-spacing: 0.03em;
-		}
+	.v-divider {
+		width: 0;
+		height: var(--steam-h-control-sm);
+		border-left: 1px solid var(--steam-border-dark);
+		border-right: 1px solid var(--steam-border-light);
+		margin: 0 0.25rem;
+		flex-shrink: 0;
 	}
 
-	@container (width >= 640px) {
-		.title {
-			font-size: var(--steam-fs-lg);
-		}
+	.nav-divider {
+		display: none;
+	}
+
+	.category-filters {
+		display: flex;
+		align-items: center;
+		min-width: 0;
+	}
+
+	.header-stats-group {
+		display: none;
+		align-items: center;
+		margin-left: auto;
+		flex-shrink: 0;
+		min-width: max-content;
 	}
 
 	.stats {
-		display: none;
+		display: flex;
 		align-items: center;
-		gap: 1rem;
-		font-size: var(--steam-fs-sm);
+		gap: 0.75rem;
+		font-size: var(--steam-fs-xs);
 		font-family: var(--steam-font-sans);
 		list-style: none;
 		margin: 0;
 		padding: 0;
-	}
-
-	@container (width >= 640px) {
-		.stats {
-			display: flex;
-		}
+		white-space: nowrap;
 	}
 
 	.stat-item {
@@ -173,24 +159,75 @@
 		font-weight: bold;
 	}
 
-	.mobile-switcher {
-		display: flex;
-		align-items: center;
-		gap: 0.15rem;
-		font-size: var(--steam-fs-xs);
-		flex-shrink: 0;
-	}
+	@container (width < 880px) {
+		.header-main {
+			width: 100%;
+			flex-wrap: wrap;
+			gap: 0.25rem 0.5rem;
+		}
 
-	@container (width >= 640px) {
-		.mobile-switcher {
-			display: none;
+		.category-filters {
+			width: 100%;
+			border-top: 1px solid var(--steam-border-dark);
+			box-shadow: inset 0 1px 0 var(--steam-border-light);
+			padding-top: 0.25rem;
+			margin-top: 0.125rem;
 		}
 	}
 
-	.mobile-switcher :global(.mobile-btn) {
-		padding: 0.125rem 0.25rem;
-		font-size: var(--steam-fs-xs);
-		gap: 0.15rem;
-		font-weight: bold;
+	@container (width >= 400px) {
+		.title {
+			font-size: var(--steam-fs-md);
+			letter-spacing: 0.03em;
+		}
+	}
+
+	@container (width >= 640px) {
+		.title {
+			font-size: var(--steam-fs-lg);
+		}
+	}
+
+	@container (width >= 880px) {
+		.header-root {
+			padding: 0 0.75rem;
+			height: var(--steam-h-bar);
+			min-height: var(--steam-h-bar);
+			max-height: var(--steam-h-bar);
+			flex-wrap: wrap;
+			align-content: flex-start;
+			overflow: hidden;
+			gap: 0 0.5rem;
+		}
+
+		.header-main {
+			height: var(--steam-h-bar);
+			flex-shrink: 0;
+			min-width: max-content;
+		}
+
+		.category-filters {
+			flex-shrink: 0;
+		}
+
+		.v-divider {
+			margin: 0 0.375rem;
+		}
+
+		.nav-divider {
+			display: block;
+		}
+
+		.header-stats-group {
+			height: var(--steam-h-bar);
+			display: flex;
+		}
+	}
+
+	@container (width >= 1200px) {
+		.stats {
+			gap: 1rem;
+			font-size: var(--steam-fs-sm);
+		}
 	}
 </style>

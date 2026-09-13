@@ -51,7 +51,7 @@
 </div>
 
 <style>
-	:global(.steam-tab.sub.active) {
+	.category-tab-item > button.active {
 		color: white;
 	}
 
@@ -75,7 +75,15 @@
 		flex-shrink: 0;
 	}
 
-	@container (width < 640px) {
+	.category-tab-item > button {
+		height: var(--steam-h-control-sm);
+		min-height: var(--steam-h-control-sm);
+		padding: 0 0.4rem;
+		font-size: var(--steam-fs-sm);
+		gap: 0.25rem;
+	}
+
+	@container (width < 880px) {
 		.category-tabs-grid {
 			padding: 0.25rem 0;
 			width: 100%;
@@ -90,6 +98,8 @@
 		}
 
 		.category-tab-item > button {
+			height: auto;
+			min-height: unset;
 			width: 100%;
 			min-width: 0;
 			justify-content: center;
@@ -106,7 +116,13 @@
 		}
 	}
 
-	@container (380px <= width < 640px) {
+	@container (width < 480px) {
+		.category-tabs-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@container (480px <= width < 880px) {
 		.category-tab-item > button {
 			font-size: var(--steam-fs-sm);
 		}

@@ -101,15 +101,22 @@
 
 	.steam-th.clickable {
 		cursor: pointer;
+		padding-right: 1.125rem;
 	}
 
-	.steam-th.clickable:hover {
-		background-color: var(--steam-panel-hover);
-		color: white;
-	}
+	@media (hover: hover) {
+		.steam-th.clickable:hover {
+			background-color: var(--steam-panel-hover);
+			color: white;
+		}
 
-	.steam-th.clickable:hover .th-icon {
-		color: white;
+		.steam-th.clickable:hover .th-icon {
+			color: white;
+		}
+
+		.steam-th.active.clickable:hover {
+			background-color: var(--steam-panel-hover-bright);
+		}
 	}
 
 	.steam-th.clickable:focus-visible {
@@ -121,14 +128,9 @@
 		background-color: var(--steam-panel-hover);
 	}
 
-	.steam-th.active.clickable:hover {
-		background-color: var(--steam-panel-hover-bright);
-	}
-
 	.th-cell {
 		display: flex;
 		align-items: center;
-		gap: 0.25rem;
 		width: 100%;
 		box-sizing: border-box;
 		min-height: var(--steam-h-control-xs);
@@ -158,10 +160,6 @@
 		text-align: right;
 	}
 
-	.steam-th.align-right .th-icon {
-		order: -1;
-	}
-
 	.th-label {
 		white-space: nowrap;
 		overflow: hidden;
@@ -169,6 +167,10 @@
 	}
 
 	.th-icon {
+		position: absolute;
+		right: 0.375rem;
+		top: 50%;
+		transform: translateY(-50%);
 		display: inline-flex;
 		align-items: center;
 		color: var(--steam-accent);

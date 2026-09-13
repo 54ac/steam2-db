@@ -9,7 +9,6 @@
 	let { buildDate, releaseDate }: Props = $props();
 
 	const delta = $derived(getReleaseDelta(buildDate, releaseDate));
-	const absDays = $derived(delta.days !== null ? Math.abs(delta.days) : 0);
 </script>
 
 {#if delta.days === null}
@@ -18,26 +17,25 @@
 		title="No release date comparison available">—</span
 	>
 {:else if delta.isPreRelease}
+	{@const d = Math.abs(delta.days)}
 	<span
 		class="delta-badge variant-pre"
-		title={`Build is ${absDays} ${absDays === 1 ? "day" : "days"} before release`}
+		title={`Build is ${d} ${d === 1 ? "day" : "days"} before release`}
 	>
 		{delta.label}
 	</span>
 {:else if delta.isPostRelease}
+	{@const d = Math.abs(delta.days)}
 	<span
 		class="delta-badge variant-post"
-		title={`Build is ${absDays} ${absDays === 1 ? "day" : "days"} after release`}
+		title={`Build is ${d} ${d === 1 ? "day" : "days"} after release`}
 	>
 		{delta.label}
 	</span>
 {:else}
-	<span
-		class="delta-badge variant-zero"
-		title="Build date matches release date"
+	<span class="delta-badge variant-post" title="Build date matches release date"
+		>0d</span
 	>
-		0d
-	</span>
 {/if}
 
 <style>
@@ -53,8 +51,7 @@
 		font-weight: bold;
 	}
 
-	.variant-post,
-	.variant-zero {
+	.variant-post {
 		color: var(--steam-text);
 		font-weight: normal;
 	}

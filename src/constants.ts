@@ -13,14 +13,38 @@ export const PAGE_SIZE = 50;
 export const DISCLAIMER_TEXT =
 	"Historical index for research & preservation only. No copyrighted files hosted.";
 
+import {
+	ListDashesIcon,
+	TreeStructureIcon,
+	FileTextIcon,
+	type IconComponentProps
+} from "phosphor-svelte";
+import type { Component } from "svelte";
+
 export interface ViewModeOption {
 	id: "depot" | "app" | "file";
 	label: string;
 	title: string;
+	icon: Component<IconComponentProps>;
 }
 
 export const VIEW_MODE_OPTIONS: ViewModeOption[] = [
-	{ id: "depot", label: "DEPOTS", title: "Browse individual depots" },
-	{ id: "app", label: "APPS", title: "Group depots by App ID" },
-	{ id: "file", label: "FILES", title: "Global file search" }
+	{
+		id: "depot",
+		label: "DEPOTS",
+		title: "Browse individual depots",
+		icon: ListDashesIcon
+	},
+	{
+		id: "app",
+		label: "APPS",
+		title: "Group depots by App ID",
+		icon: TreeStructureIcon
+	},
+	{
+		id: "file",
+		label: "FILES",
+		title: "Global file search",
+		icon: FileTextIcon
+	}
 ];

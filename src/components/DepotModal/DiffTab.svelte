@@ -60,10 +60,9 @@
 
 	// Scroll to top on filter changes
 	$effect(() => {
-		const _trigger = `${filterMode}:${filterQuery}`;
-		if (_trigger) {
-			virtualizer.scrollToTop();
-		}
+		filterMode;
+		filterQuery;
+		virtualizer.scrollToTop();
 	});
 
 	const totalChanged = $derived(
@@ -248,14 +247,14 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.35rem;
+		gap: 0.375rem;
 		flex-shrink: 0;
 		box-sizing: border-box;
 	}
 
 	@container (width >= 600px) {
 		.filter-bar {
-			padding: 0.375rem 0.75rem;
+			padding: 0.375rem 0.5rem;
 			gap: 0.5rem;
 		}
 	}
@@ -349,7 +348,7 @@
 
 	@container (width >= 600px) {
 		.table-header {
-			padding: 0.375rem 0.75rem;
+			padding: 0.375rem 0.5rem;
 			font-size: var(--steam-fs-sm);
 		}
 	}
@@ -363,6 +362,8 @@
 	}
 
 	.size-header {
+		width: 7rem;
+		text-align: right;
 		flex-shrink: 0;
 	}
 
@@ -374,7 +375,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.5rem;
+		gap: 0.75rem;
 		color: var(--steam-text);
 		border-bottom: 1px solid var(--steam-border-subtle);
 		box-sizing: border-box;
@@ -393,42 +394,22 @@
 		background-color: var(--steam-accent-dim);
 	}
 
-	@container (width >= 600px) {
-		.diff-row {
-			padding: 0 0.75rem;
-			gap: 1rem;
-		}
-	}
-
 	.file-path-group {
 		display: flex;
 		align-items: center;
-		gap: 0.35rem;
+		gap: 0.375rem;
 		overflow: hidden;
 		min-width: 0;
 		flex: 1;
-	}
-
-	@container (width >= 600px) {
-		.file-path-group {
-			gap: 0.5rem;
-		}
 	}
 
 	.status-icon-wrap {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 1rem;
-		height: 1rem;
+		width: 14px;
+		height: 14px;
 		flex-shrink: 0;
-	}
-
-	@container (width >= 600px) {
-		.status-icon-wrap {
-			width: var(--steam-h-control-xs);
-			height: var(--steam-h-control-xs);
-		}
 	}
 
 	.file-path {
@@ -447,6 +428,8 @@
 	}
 
 	.size-info {
+		width: 7rem;
+		text-align: right;
 		flex-shrink: 0;
 		font-family: var(--steam-font-sans);
 		font-size: var(--steam-fs-xs);

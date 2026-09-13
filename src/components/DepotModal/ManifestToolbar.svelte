@@ -250,8 +250,10 @@
 		font-family: var(--steam-font-sans);
 	}
 
-	.strip-close:hover {
-		color: white;
+	@media (hover: hover) {
+		.strip-close:hover {
+			color: white;
+		}
 	}
 
 	.date-select-group {
@@ -328,10 +330,17 @@
 		flex-shrink: 0;
 	}
 
-	@container (width < 600px) {
+	@container (width < 640px) {
 		:global(.extract-btn),
 		.extract-strip {
-			display: none;
+			display: none !important;
+		}
+	}
+
+	@media (hover: none) and (pointer: coarse) {
+		:global(.extract-btn),
+		.extract-strip {
+			display: none !important;
 		}
 	}
 </style>

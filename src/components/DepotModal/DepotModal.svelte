@@ -40,15 +40,6 @@
 	let diffBaseIndex = $state(0);
 	let diffTargetIndex = $state(0);
 	let diffFilterMode = $state<DiffFilterMode>("changed");
-	let currentDepotId = $state<number | null>(null);
-
-	$effect(() => {
-		if (currentDepotId !== depot.id) {
-			currentDepotId = depot.id;
-			diffBaseIndex = 0;
-			diffTargetIndex = (depot.builds || []).length > 1 ? 1 : 0;
-		}
-	});
 
 	let hasVisitedDiff = $state(false);
 	let hasVisitedHashes = $state(false);
@@ -117,9 +108,7 @@
 
 	// Invert base and compare builds
 	const handleSwapDiffBuilds = () => {
-		const temp = diffBaseIndex;
-		diffBaseIndex = diffTargetIndex;
-		diffTargetIndex = temp;
+		[diffBaseIndex, diffTargetIndex] = [diffTargetIndex, diffBaseIndex];
 	};
 
 	// Exports either single manifest filelist or computed diff summary to .txt download
@@ -347,7 +336,7 @@
 		container-name: modal;
 	}
 
-	@media (min-width: 640px) {
+	@container (width >= 640px) {
 		:global(.modal-content) {
 			width: min(
 				var(--steam-modal-max-w),

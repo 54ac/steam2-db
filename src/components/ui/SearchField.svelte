@@ -89,26 +89,24 @@
 		box-sizing: border-box;
 	}
 
-	.search-icon {
-		position: absolute;
-		left: 0.625rem;
-		top: 50%;
-		transform: translateY(-50%);
-		color: var(--steam-text);
-		pointer-events: none;
-		display: inline-flex;
-	}
-
+	.search-icon,
 	.loading-icon {
 		position: absolute;
 		left: 0.625rem;
 		top: 50%;
 		transform: translateY(-50%);
-		color: var(--steam-accent);
 		pointer-events: none;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+	}
+
+	.search-icon {
+		color: var(--steam-text);
+	}
+
+	.loading-icon {
+		color: var(--steam-accent);
 	}
 
 	.spinner {

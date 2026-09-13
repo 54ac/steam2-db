@@ -134,7 +134,7 @@
 		flex: 1;
 		align-items: center;
 		justify-content: center;
-		gap: 0.35rem;
+		gap: 0.375rem;
 	}
 
 	@container (width >= 900px) {
@@ -164,7 +164,7 @@
 		position: relative;
 		display: flex;
 		align-items: center;
-		gap: 0.35rem;
+		gap: 0.375rem;
 		padding: 0.375rem 0.625rem;
 		border-top: 1px solid var(--steam-border-dark);
 		box-shadow: 0 1px 0 var(--steam-border-light) inset;
