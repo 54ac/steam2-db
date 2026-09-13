@@ -241,9 +241,11 @@ a {
 	user-select: none;
 }
 
-.modal-close-btn:hover {
-	background-color: var(--steam-hover-bg);
-	border-color: var(--steam-accent);
+@media (hover: hover) {
+	.modal-close-btn:hover {
+		background-color: var(--steam-hover-bg);
+		border-color: var(--steam-accent);
+	}
 }
 
 .modal-body {
@@ -380,8 +382,10 @@ a {
 	cursor: pointer;
 }
 
-.steam-table-row.clickable:hover {
-	background-color: var(--steam-hover-bg);
+@media (hover: hover) {
+	.steam-table-row.clickable:hover {
+		background-color: var(--steam-hover-bg);
+	}
 }
 
 .steam-table-row:focus-visible {
