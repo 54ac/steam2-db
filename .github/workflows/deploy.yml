@@ -24,6 +24,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Build and deploy
+    environment:
+      name: ${{ inputs.target_env || 'stg' }}
+      url: ${{ steps.target.outputs.url }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
@@ -50,10 +53,12 @@ jobs:
             echo "Deploying to PRODUCTION (branch: main)"
             echo "branch=main" >> "$GITHUB_OUTPUT"
             echo "env=prod" >> "$GITHUB_OUTPUT"
+            echo "url=https://steam2-db.pages.dev" >> "$GITHUB_OUTPUT"
           else
             echo "Deploying to STAGING (branch: stg)"
             echo "branch=stg" >> "$GITHUB_OUTPUT"
             echo "env=stg" >> "$GITHUB_OUTPUT"
+            echo "url=https://stg.steam2-db.pages.dev" >> "$GITHUB_OUTPUT"
           fi
           COMMIT_MSG=$(git log -1 --pretty=%s | sed 's/["`$\\]//g')
           COMMIT_HASH=$(git rev-parse HEAD)
@@ -61,12 +66,12 @@ jobs:
           echo "commit_hash=$COMMIT_HASH" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to Cloudflare
+        id: cf_deploy
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=steam2-db --branch=${{ steps.target.outputs.branch }} --commit-hash=${{ steps.target.outputs.commit_hash }} --commit-message="${{ steps.target.outputs.commit_msg }}" --commit-dirty=false
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Write run summary
         run: |
