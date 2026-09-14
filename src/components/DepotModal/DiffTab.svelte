@@ -417,14 +417,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		color: white;
-		font-size: var(--steam-fs-sm);
 		user-select: text;
-	}
-
-	@container (width >= 600px) {
-		.file-path {
-			font-size: var(--steam-fs-base);
-		}
 	}
 
 	.size-info {
@@ -432,14 +425,7 @@
 		text-align: right;
 		flex-shrink: 0;
 		font-family: var(--steam-font-sans);
-		font-size: var(--steam-fs-xs);
 		user-select: none;
-	}
-
-	@container (width >= 600px) {
-		.size-info {
-			font-size: var(--steam-fs-sm);
-		}
 	}
 
 	.added-size {

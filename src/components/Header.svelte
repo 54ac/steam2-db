@@ -12,21 +12,23 @@
 
 <header class="header-root">
 	<div class="header-main">
-		<div class="title-area">
-			<h1 class="title">Steam2 Browser</h1>
-			<IconButton
-				href={GITHUB_URL}
-				target="_blank"
-				title="GitHub repository (opens in new tab)"
-				ariaLabel="GitHub repository (opens in new tab)"
-			>
-				<GithubLogoIcon size={15} weight="bold" />
-			</IconButton>
+		<div class="header-nav">
+			<div class="title-area">
+				<h1 class="title">Steam2 Browser</h1>
+				<IconButton
+					href={GITHUB_URL}
+					target="_blank"
+					title="GitHub repository (opens in new tab)"
+					ariaLabel="GitHub repository (opens in new tab)"
+				>
+					<GithubLogoIcon size={15} weight="bold" />
+				</IconButton>
+			</div>
+
+			<div class="v-divider" aria-hidden="true"></div>
+
+			<ViewSwitcher />
 		</div>
-
-		<div class="v-divider" aria-hidden="true"></div>
-
-		<ViewSwitcher />
 
 		{#if store.viewMode === "depot" || store.viewMode === "app"}
 			<div class="v-divider nav-divider" aria-hidden="true"></div>
@@ -90,19 +92,27 @@
 		min-width: 0;
 	}
 
-	.title-area {
+	.header-nav {
 		display: flex;
 		align-items: center;
 		gap: 0.375rem;
+		min-width: 0;
+		flex-shrink: 0;
+	}
+
+	.title-area {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
 		flex-shrink: 0;
 	}
 
 	.title {
 		color: white;
 		font-weight: bold;
-		font-size: var(--steam-fs-base);
+		font-size: var(--steam-fs-sm);
 		line-height: 1.2;
-		letter-spacing: 0.02em;
+		letter-spacing: 0.01em;
 		text-transform: uppercase;
 		margin: 0;
 		white-space: nowrap;
@@ -113,7 +123,7 @@
 		height: var(--steam-h-control-sm);
 		border-left: 1px solid var(--steam-border-dark);
 		border-right: 1px solid var(--steam-border-light);
-		margin: 0 0.25rem;
+		margin: 0 0.125rem;
 		flex-shrink: 0;
 	}
 
@@ -166,6 +176,16 @@
 			gap: 0.25rem 0.5rem;
 		}
 
+		.header-nav {
+			width: 100%;
+			overflow-x: auto;
+			scrollbar-width: none;
+		}
+
+		.header-nav::-webkit-scrollbar {
+			display: none;
+		}
+
 		.category-filters {
 			width: 100%;
 			border-top: 1px solid var(--steam-border-dark);
@@ -175,10 +195,18 @@
 		}
 	}
 
-	@container (width >= 400px) {
+	@container (width >= 480px) {
 		.title {
 			font-size: var(--steam-fs-md);
-			letter-spacing: 0.03em;
+			letter-spacing: 0.02em;
+		}
+
+		.title-area {
+			gap: 0.375rem;
+		}
+
+		.v-divider {
+			margin: 0 0.25rem;
 		}
 	}
 
@@ -204,6 +232,11 @@
 			height: var(--steam-h-bar);
 			flex-shrink: 0;
 			min-width: max-content;
+		}
+
+		.header-nav {
+			height: var(--steam-h-bar);
+			flex-shrink: 0;
 		}
 
 		.category-filters {

@@ -38,9 +38,9 @@
 	}
 
 	.view-switcher .steam-tab.primary {
-		padding: 0 0.4rem;
+		padding: 0 0.375rem;
 		font-size: var(--steam-fs-xs);
-		gap: 0.25rem;
+		gap: 0.2rem;
 		height: var(--steam-h-control-sm);
 		min-height: var(--steam-h-control-sm);
 	}

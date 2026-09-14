@@ -98,31 +98,28 @@
 		}
 
 		.category-tab-item > button {
-			height: auto;
-			min-height: unset;
 			width: 100%;
 			min-width: 0;
 			justify-content: center;
-			flex-direction: column;
-			gap: 0.0625rem;
-			padding: 0.25rem 0.125rem;
+			padding: 0 0.25rem;
 			font-size: var(--steam-fs-xs);
-			line-height: 1.15;
 		}
 
+		.category-tab-item > button span {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			max-width: 100%;
+		}
+	}
+
+	@container (width < 640px) {
 		.category-tab-item > button .count-label {
-			font-size: var(--steam-fs-xs);
-			line-height: 1.15;
+			display: none;
 		}
 	}
 
-	@container (width < 480px) {
-		.category-tabs-grid {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-	}
-
-	@container (480px <= width < 880px) {
+	@container (640px <= width < 880px) {
 		.category-tab-item > button {
 			font-size: var(--steam-fs-sm);
 		}

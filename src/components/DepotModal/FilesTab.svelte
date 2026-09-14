@@ -553,15 +553,8 @@
 		color: var(--steam-text-light);
 		flex-shrink: 0;
 		font-family: var(--steam-font-sans);
-		font-size: var(--steam-fs-xs);
 		width: 5.5rem;
 		text-align: right;
 		user-select: none;
-	}
-
-	@container (width >= 600px) {
-		.file-size {
-			font-size: var(--steam-fs-sm);
-		}
 	}
 </style>
