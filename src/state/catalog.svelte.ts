@@ -27,7 +27,7 @@ import { getDepotPageTitle } from "../utils/formatters";
 import { PAGE_SIZE } from "../constants";
 import { createFileSearch } from "./fileSearch.svelte";
 
-const CATALOG_KEY = Symbol("steam2_catalog");
+export const CATALOG_KEY = Symbol("steam2_catalog");
 
 /**
  * Store for catalog navigation, search, filtering, modal opening
@@ -315,7 +315,7 @@ export class CatalogStore {
 	}
 
 	/**
-	 * Toggles sort direction if field is currently active, or switches sort field to 'asc'.
+	 * Cycles or activates sort for a column field.
 	 *
 	 * @param field - Selected table column sort field.
 	 */

@@ -10,15 +10,9 @@
 	"private": true,
 	"type": "module",
 	"packageManager": "pnpm@12.4.1+sha512.2e81e399d73fe8390dab25e06aa788ab7a5908248d2f5a370f82b481147a6a7a367bf8048f9a6fdb6460f21a66f0542dedb8b94ca2c8723596741920b1656d4c",
-	"devEngines": {
-		"runtime": {
-			"name": "node",
-			"version": "^26.0.0"
-		},
-		"packageManager": {
-			"name": "pnpm",
-			"version": "^12.0.0"
-		}
+	"engines": {
+		"node": "^26.0.0",
+		"pnpm": "^12.0.0"
 	},
 	"scripts": {
 		"dev": "vite",
@@ -38,12 +32,15 @@
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@sveltejs/vite-plugin-svelte": "^7.3.0",
+		"@testing-library/svelte": "^5.4.2",
+		"@testing-library/user-event": "^14.6.7",
 		"@types/node": "^22.13.10",
 		"eslint": "^10.10.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-sonarjs": "^4.2.0",
 		"eslint-plugin-svelte": "^3.23.0",
 		"globals": "^17.12.0",
+		"jsdom": "^30.0.1",
 		"postcss-html": "^2.0.0",
 		"prettier": "^3.9.6",
 		"prettier-plugin-svelte": "^4.1.1",
