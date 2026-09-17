@@ -218,9 +218,9 @@
 	const isEmpty = $derived(filteredFiles.length === 0);
 
 	$effect(() => {
-		files.length;
-		viewMode;
-		virtualizer.scrollToTop();
+		if (files || viewMode) {
+			virtualizer.scrollToTop();
+		}
 	});
 </script>
 

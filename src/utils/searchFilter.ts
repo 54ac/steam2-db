@@ -222,7 +222,7 @@ export const createSearchMatcher = (query: string) => {
 		}
 
 		if (isExact) {
-			return (str: string) => str === cleanToken;
+			return (str: string) => str.toLowerCase() === cleanToken;
 		}
 
 		return (str: string) => str.toLowerCase().includes(cleanToken);

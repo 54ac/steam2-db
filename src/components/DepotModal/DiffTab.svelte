@@ -60,9 +60,9 @@
 
 	// Scroll to top on filter changes
 	$effect(() => {
-		filterMode;
-		filterQuery;
-		virtualizer.scrollToTop();
+		if (filterMode !== undefined || filterQuery !== undefined) {
+			virtualizer.scrollToTop();
+		}
 	});
 
 	const totalChanged = $derived(

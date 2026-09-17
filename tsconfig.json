@@ -11,7 +11,7 @@
 		"strict": true,
 		"noEmit": true,
 		"skipLibCheck": true,
-		"types": ["vite/client"],
+		"types": ["vite/client", "node"],
 		"noImplicitReturns": true,
 		"noImplicitOverride": true,
 		"noUnusedLocals": true,
@@ -25,6 +25,7 @@
 		"src/**/*.js",
 		"src/**/*.svelte",
 		"functions/**/*.ts",
+		"tests/**/*.ts",
 		"vite.config.ts"
 	]
 }
