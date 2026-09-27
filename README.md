@@ -41,6 +41,3 @@ Install **Node v26** and **pnpm v12**, clone the repo using `git clone https://g
 
 - Fix bugs
 - More refactoring
-- Add tests!!!
-- Add database pipeline tools
-- Update readme with proper description
