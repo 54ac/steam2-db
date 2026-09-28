@@ -224,7 +224,7 @@
 										>
 									{:else}
 										<span class="modified-hash-size">
-											Hash change ({formatBytes(entry.sizeB)})
+											~{formatBytes(entry.sizeB)}
 										</span>
 									{/if}
 								{:else}
@@ -440,6 +440,7 @@
 
 	.modified-hash-size {
 		color: var(--steam-accent);
+		font-weight: bold;
 	}
 
 	.unchanged-size {
