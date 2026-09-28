@@ -119,6 +119,10 @@
 	}
 
 	@container (width >= 600px) {
+		.scroll-fade :global(svg) {
+			display: none;
+		}
+
 		.mobile-scroll-root.desktop-wrap .mobile-scroll-track {
 			overflow-x: visible;
 			flex-wrap: wrap;

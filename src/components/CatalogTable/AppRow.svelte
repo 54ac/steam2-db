@@ -16,6 +16,7 @@
 	import FileMatchPill from "./FileMatchPill.svelte";
 	import SteamDbLink from "../ui/SteamDbLink.svelte";
 	import IconButton from "../ui/IconButton.svelte";
+	import MobileScrollArea from "../ui/MobileScrollArea.svelte";
 
 	interface Props {
 		app: AppGroup;
@@ -86,42 +87,51 @@
 		<div
 			class="depots-container"
 			aria-label={`Depots belonging to ${app.game}`}
+			style:--scroll-fade-bg={isEven
+				? "var(--steam-darkpanel)"
+				: "var(--steam-darkpanel-alt)"}
 		>
-			{#each app.depots as depot, idx (depot.id)}
-				{@const hasManifest = Boolean(depot.builds && depot.builds.length > 0)}
-				{@const isMatched = store.depotMatchMap.has(depot.id)}
-				{@const info = getDepotDisplayName(depot)}
-				{@const isSameName =
-					!depot.depot ||
-					depot.depot.trim().toLowerCase() === app.game.trim().toLowerCase() ||
-					info.chipName.trim().toLowerCase() === app.game.trim().toLowerCase()}
-				{@const displayChipName = isSameName
-					? `Depot #${depot.id}`
-					: info.chipName}
+			<MobileScrollArea
+				desktopWrap={isExpanded}
+				resetKey={app.appId}
+				class="depots-scroll-area"
+			>
+				{#each app.depots as depot (depot.id)}
+					{@const hasManifest = Boolean(depot.builds && depot.builds.length > 0)}
+					{@const isMatched = store.depotMatchMap.has(depot.id)}
+					{@const info = getDepotDisplayName(depot)}
+					{@const isSameName =
+						!depot.depot ||
+						depot.depot.trim().toLowerCase() === app.game.trim().toLowerCase() ||
+						info.chipName.trim().toLowerCase() === app.game.trim().toLowerCase()}
+					{@const displayChipName = isSameName
+						? `Depot #${depot.id}`
+						: info.chipName}
 
-				<button
-					type="button"
-					class="depot-chip-btn"
-					class:has-manifest={hasManifest}
-					class:matched={isMatched}
-					class:mobile-hidden={!isExpanded && idx >= 2 && !isMatched}
-					disabled={!hasManifest}
-					onclick={(e) => handleChipClick(e, depot)}
-					title={hasManifest
-						? `Click to view ${info.primaryTitle} files`
-						: `${info.primaryTitle} (Depot ${depot.id}) has no manifest filelist`}
-				>
-					<span>{displayChipName}</span>
-					{#if !isSameName}
-						<span class="depot-id-label" class:has-manifest={hasManifest}>
-							({depot.id})
-						</span>
-					{/if}
-				</button>
-			{/each}
+					<button
+						type="button"
+						class="depot-chip-btn"
+						class:has-manifest={hasManifest}
+						class:matched={isMatched}
+						disabled={!hasManifest}
+						onclick={(e) => handleChipClick(e, depot)}
+						title={hasManifest
+							? `Click to view ${info.primaryTitle} files`
+							: `${info.primaryTitle} (Depot ${depot.id}) has no manifest filelist`}
+					>
+						<span>{displayChipName}</span>
+						{#if !isSameName}
+							<span class="depot-id-label" class:has-manifest={hasManifest}>
+								({depot.id})
+							</span>
+						{/if}
+					</button>
+				{/each}
+			</MobileScrollArea>
 			{#if app.depots.length > 2}
 				<IconButton
 					variant="raised"
+					size="xs"
 					class="depot-expand-btn"
 					onclick={(e) => {
 						e.stopPropagation();
@@ -171,10 +181,15 @@
 	.depots-container {
 		margin-top: 0.375rem;
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		gap: 0.375rem;
-		flex-wrap: wrap;
 		width: 100%;
+		min-width: 0;
+	}
+
+	:global(.depots-scroll-area) {
+		flex: 1;
+		min-width: 0;
 	}
 
 	.depot-chip-btn {
@@ -196,6 +211,7 @@
 		cursor: default;
 		opacity: 0.6;
 		box-sizing: border-box;
+		flex-shrink: 0;
 	}
 
 	.depot-chip-btn.has-manifest {
@@ -229,17 +245,17 @@
 	}
 
 	:global(.depot-expand-btn) {
-		display: none;
+		align-self: flex-start;
 		min-height: 1.25rem;
+		height: 1.25rem;
+		width: 1.25rem;
+		flex-shrink: 0;
+		padding: 0;
 	}
 
-	@container (width < 640px) {
-		.depot-chip-btn.mobile-hidden {
-			display: none;
-		}
-
+	@container (width < 600px) {
 		:global(.depot-expand-btn) {
-			display: inline-flex;
+			display: none !important;
 		}
 	}
 </style>
