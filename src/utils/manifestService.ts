@@ -70,7 +70,12 @@ export const fetchDepotBundle = async (
 	}
 
 	const shard = Math.floor(depotId / MANIFEST_SHARD);
-	const manifestUrl = `/manifests/${shard}/${bundleKey}.json.gz`;
+	// Caching
+	const vQuery =
+		typeof __BUILD_HASH__ !== "undefined" && __BUILD_HASH__
+			? `?v=${__BUILD_HASH__}`
+			: "";
+	const manifestUrl = `/manifests/${shard}/${bundleKey}.json.gz${vQuery}`;
 	const res = await fetch(manifestUrl, { signal });
 	if (!res.ok) {
 		throw new Error(`HTTP ${res.status}: Manifest filelist not found.`);
