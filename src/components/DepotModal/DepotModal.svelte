@@ -131,31 +131,14 @@
 		}
 	};
 
-	// Switch to diff tab: initialize base to parent build or adjacent version
 	const handleSelectDiff = () => {
 		hasVisitedDiff = true;
 		if (builds.length >= 2) {
-			diffTargetIndex = selectedBuildIndex;
-			const targetBuild = builds[selectedBuildIndex];
-			let matchedBase = -1;
-
-			const { parentCrc, previousVersion } = targetBuild || {};
-
-			if (parentCrc) {
-				matchedBase = builds.findIndex((b) => b.crc32 === parentCrc);
-			}
-			if (matchedBase === -1 && previousVersion !== undefined) {
-				matchedBase = builds.findIndex((b) => b.version === previousVersion);
-			}
-
-			if (matchedBase !== -1 && matchedBase !== selectedBuildIndex) {
-				diffBaseIndex = matchedBase;
-			} else if (selectedBuildIndex > 0) {
-				diffBaseIndex = selectedBuildIndex - 1;
-			} else {
-				diffBaseIndex = 0;
-				diffTargetIndex = 1;
-			}
+			diffBaseIndex = selectedBuildIndex;
+			diffTargetIndex =
+				selectedBuildIndex < builds.length - 1
+					? selectedBuildIndex + 1
+					: selectedBuildIndex - 1;
 		}
 		modalTab = "diff";
 	};

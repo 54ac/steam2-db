@@ -42,8 +42,8 @@
 				{builds}
 				value={diffBaseIndex}
 				onchange={onDiffBaseSelect}
-				disabledIndex={diffTargetIndex}
-				disabledSuffix=" [Active B]"
+				selectedIndexA={diffBaseIndex}
+				selectedIndexB={diffTargetIndex}
 				prefix="A"
 				ariaLabel="Select base manifest build"
 			/>
@@ -68,8 +68,8 @@
 				{builds}
 				value={diffTargetIndex}
 				onchange={onDiffTargetSelect}
-				disabledIndex={diffBaseIndex}
-				disabledSuffix=" [Active A]"
+				selectedIndexA={diffBaseIndex}
+				selectedIndexB={diffTargetIndex}
 				prefix="B"
 				ariaLabel="Select compare manifest build"
 			/>

@@ -9,6 +9,8 @@
 		onchange: (idx: number) => void;
 		disabledIndex?: number;
 		disabledSuffix?: string;
+		selectedIndexA?: number;
+		selectedIndexB?: number;
 		prefix?: string;
 		ariaLabel?: string;
 		class?: string;
@@ -21,6 +23,8 @@
 		onchange,
 		disabledIndex,
 		disabledSuffix = "",
+		selectedIndexA,
+		selectedIndexB,
 		prefix,
 		ariaLabel = "Select manifest build version",
 		class: className = ""
@@ -69,10 +73,20 @@
 >
 	{#each builds as build, idx (idx)}
 		{@const isDuplicate = (versionCounts.get(build.version) || 0) > 1}
-		{@const isDisabled = disabledIndex !== undefined && idx === disabledIndex}
-		{@const suffix = isDisabled && disabledSuffix ? disabledSuffix : ""}
+		{@const isDisabled =
+			(disabledIndex !== undefined && idx === disabledIndex) ||
+			idx === selectedIndexA ||
+			idx === selectedIndexB}
+		{@const tag =
+			idx === selectedIndexA
+				? " [A]"
+				: idx === selectedIndexB
+					? " [B]"
+					: isDisabled && disabledSuffix
+						? disabledSuffix
+						: ""}
 		<option value={idx} disabled={isDisabled}>
-			{formatLabel(build, isDuplicate)}{suffix}
+			{formatLabel(build, isDuplicate)}{tag}
 		</option>
 	{/each}
 </select>
