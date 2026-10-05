@@ -64,13 +64,19 @@
 		return builds[selectedBuildIndex]?.crc32 || blobCrc;
 	});
 
+	const isUnix =
+		typeof navigator !== "undefined" && /linux|mac/i.test(navigator.platform);
+
 	const extractCommand = $derived.by(() => {
 		if (depotId === undefined) {
 			return "";
 		}
 		const v = builds[selectedBuildIndex]?.version ?? 0;
 		const crcFlag = currentCrc ? ` --blobcrc ${currentCrc}` : "";
-		return `extract.exe ..\\blobs ..\\dats ${depotId} ${v}${crcFlag} --out ..\\out`;
+		if (isUnix) {
+			return `./extract ../blobs ../dats ${depotId} ${v}${crcFlag} --out ../out`;
+		}
+		return `.\\extract.exe ..\\blobs ..\\dats ${depotId} ${v}${crcFlag} --out ..\\out`;
 	});
 
 	const handleToggleExtract = () => {
