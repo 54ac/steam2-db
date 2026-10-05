@@ -69,6 +69,7 @@ export interface AppStats {
 }
 
 export type ViewMode = "depot" | "app" | "file";
+export type FileViewMode = "list" | "tree";
 export type DepotFilter = "all" | "multi" | "single" | "pre_release";
 export type AppFilter = "all" | "multi" | "single";
 export type SortField =

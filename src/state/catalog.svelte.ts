@@ -8,6 +8,7 @@ import type {
 	DepotFileMatchRow,
 	MatchedFileItem,
 	ViewMode,
+	FileViewMode,
 	DepotFilter,
 	AppFilter,
 	SortField,
@@ -40,6 +41,7 @@ export class CatalogStore {
 	selectedBuildIndex = $state(0);
 
 	viewMode = $state<ViewMode>("depot");
+	fileViewMode = $state<FileViewMode>("list");
 	catalogSearchQuery = $state("");
 	fileSearchQuery = $state("");
 	depotFilter = $state<DepotFilter>("all");

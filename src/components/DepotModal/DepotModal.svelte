@@ -35,7 +35,6 @@
 
 	let modalTab = $state<ModalTab>("files");
 	let fileFilter = $state("");
-	let fileViewMode = $state<"list" | "tree">("list");
 	let diffFilter = $state("");
 	let diffBaseIndex = $state(0);
 	let diffTargetIndex = $state(0);
@@ -202,7 +201,7 @@
 						depotId={depot.id}
 						dumpFiles={manifestLoader.manifestData?.dumpFiles || []}
 						bind:fileFilter
-						bind:fileViewMode
+						bind:fileViewMode={store.fileViewMode}
 						bind:searchInputRef={fileSearchInputRef}
 						canExport={Boolean(manifestLoader.manifestData?.files?.length)}
 						onBuildSelect={handleBuildSelect}
@@ -240,7 +239,7 @@
 							<FilesTab
 								files={manifestLoader.manifestData.files}
 								filterQuery={fileFilter}
-								viewMode={fileViewMode}
+								viewMode={store.fileViewMode}
 							/>
 						{:else}
 							<div class="state-box steam-sunken">
