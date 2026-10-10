@@ -42,7 +42,7 @@
 
 	let sortField = $state<SortField>("path");
 	let sortOrder = $state<SortOrder>("asc");
-	let expandedDirs = new SvelteSet<string>([""]);
+	let expandedDirs = $state(new SvelteSet<string>([""]));
 	let scrollParent = $state<HTMLDivElement | null>(null);
 
 	const handleToggleSort = (field: SortField) => {

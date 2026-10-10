@@ -236,11 +236,13 @@
 								</Button>
 							</div>
 						{:else if manifestLoader.manifestData}
-							<FilesTab
-								files={manifestLoader.manifestData.files}
-								filterQuery={fileFilter}
-								viewMode={store.fileViewMode}
-							/>
+							{#key `${depot.id}_${selectedBuildIndex}`}
+								<FilesTab
+									files={manifestLoader.manifestData.files}
+									filterQuery={fileFilter}
+									viewMode={store.fileViewMode}
+								/>
+							{/key}
 						{:else}
 							<div class="state-box steam-sunken">
 								<span class="state-text"
